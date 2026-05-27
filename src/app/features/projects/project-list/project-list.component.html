@@ -1,0 +1,197 @@
+<div class="relative flex flex-col p-6 gap-6">
+  <header class="projects__header">
+    <div>
+      <h1>Projects</h1>
+      <p>Manage and track all your projects.</p>
+    </div>
+  </header>
+
+  <div class="projects__toolbar">
+    <mat-form-field appearance="outline" class="projects__search" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput placeholder="Search projects..." [formControl]="searchControl" />
+    </mat-form-field>
+
+    <mat-chip-listbox
+      class="projects__filters"
+      [value]="status()"
+      (change)="status.set($event.value)"
+      aria-label="Filter projects by status"
+    >
+      @for (filter of statusFilters; track filter.value) {
+        <mat-chip-option [value]="filter.value" [selectable]="true">
+          {{ filter.label }}
+        </mat-chip-option>
+      }
+    </mat-chip-listbox>
+
+    <button mat-stroked-button>
+      <mat-icon>filter_list</mat-icon>
+      Filter
+    </button>
+
+    <mat-button-toggle-group
+      [value]="view()"
+      (change)="view.set($event.value)"
+      hideSingleSelectionIndicator
+      aria-label="View mode"
+    >
+      <mat-button-toggle value="grid" aria-label="Grid view">
+        <mat-icon>grid_view</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="list" aria-label="List view">
+        <mat-icon>view_list</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  @if (filteredProjects().length === 0) {
+    <div class="projects__empty">
+      <mat-icon>folder_off</mat-icon>
+      <p>No projects match your filters.</p>
+    </div>
+  } @else if (view() === 'grid') {
+    <section class="projects__grid">
+      @for (project of filteredProjects(); track trackById($index, project)) {
+        <mat-card
+          appearance="outlined"
+          class="project-card"
+          [routerLink]="['/projects', project.id]"
+        >
+          <div class="project-card__header">
+            <div class="project-card__title-block">
+              <h3 class="project-card__name">{{ project.name }}</h3>
+              <p class="project-card__description">{{ project.description }}</p>
+            </div>
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="cardMenu"
+              aria-label="Project options"
+              (click)="$event.stopPropagation()"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #cardMenu="matMenu">
+              <button mat-menu-item>
+                <mat-icon>edit</mat-icon>
+                <span>Edit project</span>
+              </button>
+              <button mat-menu-item>
+                <mat-icon>content_copy</mat-icon>
+                <span>Duplicate</span>
+              </button>
+              <mat-divider />
+              <button mat-menu-item class="menu-item--destructive">
+                <mat-icon>archive</mat-icon>
+                <span>Archive</span>
+              </button>
+            </mat-menu>
+          </div>
+
+          <div class="project-card__progress">
+            <div class="project-card__progress-label">
+              <span>Progress</span>
+              <span class="project-card__progress-value">{{ project.progress }}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="project.progress" />
+          </div>
+
+          <div class="project-card__stats">
+            <span class="project-card__stat">
+              <mat-icon>track_changes</mat-icon>
+              {{ project.tasks.completed }}/{{ project.tasks.total }}
+            </span>
+            <span class="project-card__stat">
+              <mat-icon>event</mat-icon>
+              {{ project.dueDate.split(',')[0] }}
+            </span>
+          </div>
+
+          <mat-divider />
+
+          <div class="project-card__footer">
+            <div class="project-card__team">
+              @for (member of project.team.slice(0, 4); track member + $index) {
+                <span class="project-card__avatar" [matTooltip]="member">{{ member }}</span>
+              }
+              @if (project.team.length > 4) {
+                <span class="project-card__avatar project-card__avatar--more">
+                  +{{ project.team.length - 4 }}
+                </span>
+              }
+            </div>
+            <span class="priority-chip priority-chip--{{ project.priority }}">
+              {{ project.priority }}
+            </span>
+          </div>
+        </mat-card>
+      }
+    </section>
+  } @else {
+    <mat-card appearance="outlined" class="projects__list">
+      @for (project of filteredProjects(); track trackById($index, project); let last = $last) {
+        <div class="project-row" [routerLink]="['/projects', project.id]">
+          <div class="project-row__main">
+            <h3 class="project-row__name">{{ project.name }}</h3>
+            <p class="project-row__description">{{ project.description }}</p>
+          </div>
+
+          <div class="project-row__progress">
+            <div class="project-row__progress-label">
+              <span>Progress</span>
+              <span class="project-row__progress-value">{{ project.progress }}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="project.progress" />
+          </div>
+
+          <div class="project-row__team">
+            @for (member of project.team.slice(0, 3); track member + $index) {
+              <span class="project-card__avatar" [matTooltip]="member">{{ member }}</span>
+            }
+          </div>
+
+          <span class="priority-chip priority-chip--{{ project.priority }}">
+            {{ project.priority }}
+          </span>
+
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="rowMenu"
+            aria-label="Project options"
+            (click)="$event.stopPropagation()"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #rowMenu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>edit</mat-icon>
+              <span>Edit project</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>content_copy</mat-icon>
+              <span>Duplicate</span>
+            </button>
+            <mat-divider />
+            <button mat-menu-item class="menu-item--destructive">
+              <mat-icon>archive</mat-icon>
+              <span>Archive</span>
+            </button>
+          </mat-menu>
+        </div>
+        @if (!last) {
+          <mat-divider />
+        }
+      }
+    </mat-card>
+  }
+
+  <button
+    mat-fab
+    color="primary"
+    class="projects__fab"
+    aria-label="Create new project"
+    (click)="openNewProject()"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

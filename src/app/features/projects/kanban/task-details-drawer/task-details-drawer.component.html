@@ -1,0 +1,196 @@
+@if (task) {
+  <div class="drawer-overlay" @fadeOverlay (click)="close()"></div>
+
+  <aside class="drawer" @slideInOut role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <header class="drawer__header">
+      <div class="drawer__heading">
+        <div class="drawer__badges">
+          <span class="drawer__badge drawer__badge--id">TASK-{{ task.id }}</span>
+          <span class="drawer__badge drawer__badge--status">In Progress</span>
+        </div>
+        <h2 id="drawer-title" class="drawer__title">{{ task.title }}</h2>
+      </div>
+      <button mat-icon-button class="drawer__close" (click)="close()" aria-label="Close">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    @if (task.description) {
+      <p class="drawer__description">{{ task.description }}</p>
+    }
+
+    <div class="drawer__body">
+      <section class="drawer__metadata">
+        <div class="drawer__grid">
+          <div class="drawer__field">
+            <span class="drawer__label">Assignee</span>
+            <button
+              mat-stroked-button
+              class="drawer__field-button"
+              [matMenuTriggerFor]="assigneeMenu"
+            >
+              @if (task.assignee) {
+                <span class="drawer__avatar">{{ task.assignee }}</span>
+              }
+              <span>{{ task.assignee ?? 'Unassigned' }}</span>
+            </button>
+            <mat-menu #assigneeMenu="matMenu">
+              <button mat-menu-item>Change assignee</button>
+              <button mat-menu-item>Remove assignee</button>
+            </mat-menu>
+          </div>
+
+          <div class="drawer__field">
+            <span class="drawer__label">Priority</span>
+            <button
+              mat-stroked-button
+              class="drawer__field-button"
+              [matMenuTriggerFor]="priorityMenu"
+            >
+              <mat-icon
+                class="drawer__flag"
+                [class.drawer__flag--high]="task.priority === 'high'"
+                [class.drawer__flag--medium]="task.priority === 'medium'"
+                [class.drawer__flag--low]="task.priority === 'low'"
+                >flag</mat-icon
+              >
+              <span>{{ task.priority | titlecase }}</span>
+            </button>
+            <mat-menu #priorityMenu="matMenu">
+              <button mat-menu-item>Low</button>
+              <button mat-menu-item>Medium</button>
+              <button mat-menu-item>High</button>
+            </mat-menu>
+          </div>
+
+          <div class="drawer__field">
+            <span class="drawer__label">Due Date</span>
+            <button mat-stroked-button class="drawer__field-button">
+              <mat-icon>event</mat-icon>
+              <span>{{ task.dueDate ?? 'No date' }}</span>
+            </button>
+          </div>
+
+          <div class="drawer__field">
+            <span class="drawer__label">Time Tracking</span>
+            <button mat-stroked-button class="drawer__field-button">
+              <mat-icon>schedule</mat-icon>
+              <span>2h 30m logged</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="drawer__field">
+          <span class="drawer__label">Labels</span>
+          <div class="drawer__chips">
+            @for (label of task.labels; track label) {
+              <span class="drawer__chip">{{ label }}</span>
+            }
+            <button class="drawer__chip drawer__chip--add" type="button">+ Add label</button>
+          </div>
+        </div>
+
+        <div class="drawer__field">
+          <span class="drawer__label">Attachments</span>
+          <div class="drawer__attachments">
+            <div class="drawer__attachment">
+              <span class="drawer__attachment-icon"><mat-icon>attach_file</mat-icon></span>
+              <div class="drawer__attachment-meta">
+                <p class="drawer__attachment-name">mockup-v1.fig</p>
+                <p class="drawer__attachment-sub">2.4 MB · 2 hours ago</p>
+              </div>
+            </div>
+            <button mat-stroked-button class="drawer__attachment-add" type="button">
+              <mat-icon>add</mat-icon>
+              <span>Add attachment</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <mat-divider />
+
+      <mat-tab-group
+        class="drawer__tabs"
+        animationDuration="0ms"
+        [selectedIndex]="activeTab() === 'comments' ? 0 : 1"
+        (selectedIndexChange)="activeTab.set($event === 0 ? 'comments' : 'activity')"
+      >
+        <mat-tab [label]="'Comments (' + comments.length + ')'">
+          <ul class="drawer__comments">
+            @for (comment of comments; track comment.id) {
+              <li class="comment">
+                <span class="drawer__avatar comment__avatar">{{ comment.avatar }}</span>
+                <div class="comment__body">
+                  <div class="comment__bubble">
+                    <header class="comment__header">
+                      <span class="comment__author">{{ comment.author }}</span>
+                      <span class="comment__timestamp">{{ comment.timestamp }}</span>
+                    </header>
+                    <p class="comment__content">{{ comment.content }}</p>
+                  </div>
+                  @if (comment.reactions?.length) {
+                    <div class="comment__reactions">
+                      @for (reaction of comment.reactions; track reaction.emoji) {
+                        <button class="reaction" type="button">
+                          <span>{{ reaction.emoji }}</span>
+                          <span>{{ reaction.count }}</span>
+                        </button>
+                      }
+                      <button mat-icon-button class="reaction__add" aria-label="Add reaction">
+                        <mat-icon>add_reaction</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        </mat-tab>
+
+        <mat-tab label="Activity">
+          <ul class="drawer__activity">
+            @for (item of activity; track item.id) {
+              <li class="activity-item">
+                <span class="drawer__avatar activity-item__avatar">{{ item.avatar }}</span>
+                <div>
+                  <p class="activity-item__text">
+                    <strong>{{ item.author }}</strong>
+                    <span class="activity-item__content"> {{ item.content }}</span>
+                  </p>
+                  <p class="activity-item__timestamp">{{ item.timestamp }}</p>
+                </div>
+              </li>
+            }
+          </ul>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+
+    <footer class="drawer__composer">
+      <span class="drawer__avatar">JD</span>
+      <div class="drawer__composer-body">
+        <mat-form-field appearance="outline" class="drawer__composer-field">
+          <input matInput placeholder="Add a comment…" [formControl]="commentControl" />
+        </mat-form-field>
+        <div class="drawer__composer-actions">
+          <div class="drawer__composer-tools">
+            <button mat-icon-button aria-label="Attach file">
+              <mat-icon>attach_file</mat-icon>
+            </button>
+            <button mat-icon-button aria-label="Add emoji"><mat-icon>mood</mat-icon></button>
+          </div>
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            [disabled]="!commentControl.value.trim()"
+            (click)="postComment()"
+          >
+            Comment
+          </button>
+        </div>
+      </div>
+    </footer>
+  </aside>
+}

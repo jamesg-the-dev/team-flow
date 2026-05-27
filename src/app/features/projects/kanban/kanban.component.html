@@ -1,0 +1,73 @@
+<section class="kanban">
+  <header class="kanban__header">
+    <div class="kanban__header-top">
+      <div>
+        <h1 class="kanban__title">Product Redesign</h1>
+        <p class="kanban__subtitle">Track and manage project tasks</p>
+      </div>
+      <div class="kanban__actions">
+        <button mat-flat-button color="primary">
+          <mat-icon>add</mat-icon>
+          Add Task
+        </button>
+        <button mat-icon-button [matMenuTriggerFor]="boardMenu" aria-label="Board actions">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #boardMenu="matMenu">
+          <button mat-menu-item><mat-icon>settings</mat-icon><span>Board settings</span></button>
+          <button mat-menu-item><mat-icon>download</mat-icon><span>Export</span></button>
+          <mat-divider />
+          <button mat-menu-item><mat-icon>archive</mat-icon><span>Archive board</span></button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <div class="kanban__toolbar">
+      <mat-form-field appearance="outline" class="kanban__search" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput placeholder="Search tasks…" [formControl]="searchControl" />
+      </mat-form-field>
+      <button mat-stroked-button>
+        <mat-icon>tune</mat-icon>
+        Filters
+      </button>
+    </div>
+  </header>
+
+  <div class="kanban__board">
+    @for (column of columns; track column.id) {
+      <div class="column">
+        <header class="column__header">
+          <div class="column__title-group">
+            <span class="column__dot" [style.background]="column.accent"></span>
+            <h3 class="column__title">{{ column.title }}</h3>
+            <span class="column__count">{{ tasksFor(column.id).length }}</span>
+          </div>
+          <button mat-icon-button aria-label="Add task" matTooltip="Add task">
+            <mat-icon>add</mat-icon>
+          </button>
+        </header>
+
+        <div
+          class="column__list"
+          cdkDropList
+          [id]="dropListIdFor(column.id)"
+          [cdkDropListData]="tasksFor(column.id)"
+          [cdkDropListConnectedTo]="columnDropListIds"
+          (cdkDropListDropped)="onTaskDrop($event, column.id)"
+        >
+          @for (task of tasksFor(column.id); track task.id) {
+            <div cdkDrag [cdkDragData]="task" class="column__item">
+              <app-task-card [task]="task" (openTask)="openTask($event)" />
+              <div class="column__placeholder" *cdkDragPlaceholder></div>
+            </div>
+          } @empty {
+            <p class="column__empty">Drop tasks here</p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<app-task-details-drawer [task]="selectedTask()" (closed)="closeTask()" />

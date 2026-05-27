@@ -1,0 +1,49 @@
+<aside class="sidebar flex flex-col items-center h-full">
+  <div
+    class="sidebar__brand flex items-center justify-center mb-6 rounded-md font-bold text-xl"
+    aria-label="TeamFlow"
+  >
+    T
+  </div>
+
+  <nav class="sidebar__nav" aria-label="Primary">
+    @for (item of navItems; track item.href) {
+      <a
+        [routerLink]="item.href"
+        routerLinkActive="sidebar__link--active"
+        class="sidebar__link relative flex items-center justify-center w-14 h-14 rounded-lg"
+        [matTooltip]="item.label"
+        matTooltipPosition="right"
+      >
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span class="sidebar__active-indicator" aria-hidden="true"></span>
+      </a>
+    }
+  </nav>
+
+  <button
+    mat-icon-button
+    class="sidebar__profile-btn mt-auto"
+    [matMenuTriggerFor]="profileMenu"
+    aria-label="Account menu"
+  >
+    <div class="sidebar__avatar w-full h-full flex items-center justify-center font-medium text-sm">
+      JD
+    </div>
+  </button>
+
+  <mat-menu #profileMenu="matMenu">
+    <button mat-menu-item>
+      <mat-icon>person</mat-icon>
+      <span>Profile</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>tune</mat-icon>
+      <span>Preferences</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>logout</mat-icon>
+      <span>Sign out</span>
+    </button>
+  </mat-menu>
+</aside>

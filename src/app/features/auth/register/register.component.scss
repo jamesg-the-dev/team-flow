@@ -1,0 +1,76 @@
+@use '../auth-shell' as *;
+
+.auth {
+  &__brand-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__testimonial {
+    margin: 0;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    background-color: color-mix(in srgb, var(--sys-on-primary) 10%, transparent);
+    backdrop-filter: blur(8px);
+
+    blockquote {
+      margin: 0;
+      font-size: 1.125rem;
+      font-style: italic;
+      color: color-mix(in srgb, var(--sys-on-primary) 90%, transparent);
+    }
+
+    figcaption {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+  }
+
+  &__testimonial-avatar {
+    flex: 0 0 auto;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: color-mix(in srgb, var(--sys-on-primary) 20%, transparent);
+  }
+
+  &__testimonial-author {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  &__testimonial-role {
+    margin: 0.125rem 0 0;
+    font-size: 0.875rem;
+    color: color-mix(in srgb, var(--sys-on-primary) 70%, transparent);
+  }
+
+  &__stats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    text-align: center;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__stat-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+  }
+
+  &__stat-label {
+    font-size: 0.875rem;
+    color: color-mix(in srgb, var(--sys-on-primary) 70%, transparent);
+  }
+}

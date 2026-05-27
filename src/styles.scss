@@ -1,1 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
+@use './styles/theme';
+@use './styles/elevation';
+@use './styles/utilities';
+@use '@angular/cdk/overlay-prebuilt.css';
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: var(--sys-background);
+  color: var(--sys-on-background);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+//Material Angular overrides
+.mat-mdc-card-title {
+  --mat-card-title-text-weight: 600;
+}
+
+.mat-mdc-card-subtitle {
+  --mat-card-subtitle-text-weight: 400;
+  color: var(--sys-on-surface-variant);
+}

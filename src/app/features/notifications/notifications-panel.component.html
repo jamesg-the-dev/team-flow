@@ -1,0 +1,73 @@
+<section class="panel" role="dialog" aria-label="Notifications">
+  <header class="panel__header">
+    <h2 class="panel__title">Notifications</h2>
+    <button mat-icon-button class="panel__close" (click)="close()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <mat-tab-group
+    class="panel__tabs"
+    animationDuration="0ms"
+    [selectedIndex]="activeTab() === 'all' ? 0 : activeTab() === 'unread' ? 1 : 2"
+    (selectedIndexChange)="setTab($event)"
+  >
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">
+          All
+          @if (unreadCount() > 0) {
+            <span class="tab-label__badge">{{ unreadCount() }}</span>
+          }
+        </span>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Unread"></mat-tab>
+    <mat-tab label="Archived"></mat-tab>
+  </mat-tab-group>
+
+  <div class="panel__body">
+    @if (visible().length > 0) {
+      <ul class="notifications">
+        @for (notification of visible(); track notification.id) {
+          <li class="notification" [class.notification--unread]="!notification.isRead" tabindex="0">
+            <span class="notification__avatar-wrap">
+              <span class="avatar">{{ notification.avatar }}</span>
+              <span class="notification__icon">
+                <mat-icon>{{ iconFor(notification.type) }}</mat-icon>
+              </span>
+            </span>
+
+            <div class="notification__body">
+              <div class="notification__top">
+                <p class="notification__title">{{ notification.title }}</p>
+                @if (!notification.isRead) {
+                  <span class="notification__dot" aria-label="Unread"></span>
+                }
+              </div>
+              <p class="notification__description">{{ notification.description }}</p>
+              <p class="notification__timestamp">{{ notification.timestamp }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <div class="empty">
+        <mat-icon class="empty__icon">
+          {{ activeTab() === 'archived' ? 'inbox' : 'check_circle' }}
+        </mat-icon>
+        <p class="empty__text">
+          {{ activeTab() === 'archived' ? 'No archived notifications' : 'All caught up!' }}
+        </p>
+      </div>
+    }
+  </div>
+
+  <footer class="panel__footer">
+    <button mat-button (click)="markAllRead()" [disabled]="unreadCount() === 0">
+      <mat-icon>done_all</mat-icon>
+      Mark all as read
+    </button>
+    <button mat-button>Settings</button>
+  </footer>
+</section>

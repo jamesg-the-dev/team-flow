@@ -1,0 +1,292 @@
+@if (project(); as p) {
+  <div class="project-details flex flex-col min-h-full">
+    <header class="project-details__header">
+      <div class="project-details__topbar">
+        <button mat-button (click)="goBack()" class="project-details__back">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Projects
+        </button>
+
+        <div class="project-details__actions">
+          <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="More actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #moreMenu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>star_outline</mat-icon>
+              <span>Add to favorites</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>archive</mat-icon>
+              <span>Archive project</span>
+            </button>
+            <button mat-menu-item (click)="openEditDialog()">
+              <mat-icon>edit</mat-icon>
+              <span>Edit</span>
+            </button>
+            <mat-divider />
+            <button mat-menu-item class="menu-item--destructive">
+              <mat-icon>delete</mat-icon>
+              <span>Delete project</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+
+      <div class="project-details__title-block">
+        <h1 class="project-details__title">{{ p.name }}</h1>
+
+        <div class="project-details__meta">
+          <span class="status-chip status-chip--{{ statusVariant() }}">{{ p.status }}</span>
+          <span class="status-chip status-chip--{{ priorityVariant() }}">
+            {{ p.priority }} priority
+          </span>
+          <span class="project-details__meta-item">
+            <mat-icon>event</mat-icon>
+            Due {{ p.dueDate | date: 'mediumDate' }}
+          </span>
+          <span class="project-details__meta-item">
+            <mat-icon>group</mat-icon>
+            {{ p.team.length }} members
+          </span>
+        </div>
+
+        <div class="project-details__progress flex flex-col gap-1">
+          <div class="project-details__progress-row flex justify-between text-sm">
+            <span class="mb-1">Project Progress</span>
+            <span class="project-details__progress-value font-semibold">{{ p.progress }}%</span>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="p.progress" />
+        </div>
+      </div>
+
+      <nav mat-tab-nav-bar mat-stretch-tabs="false" mat-align-tabs="start" [tabPanel]="tabPanel">
+        @for (tab of tabs; track tab.key) {
+          <a
+            mat-tab-link
+            class="relative overflow-hidden"
+            [active]="activeTab() === tab.key"
+            (click)="activeTab.set(tab.key)"
+          >
+            {{ tab.label }}
+          </a>
+        }
+      </nav>
+      <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+    </header>
+
+    <div class="project-details__content">
+      @switch (activeTab()) {
+        @case ('overview') {
+          <div class="overview">
+            <div class="overview__main">
+              <mat-card appearance="outlined" class="overview__card">
+                <mat-card-header class="mb-2">
+                  <mat-card-title>Description</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <p class="overview__description">{{ p.description }}</p>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card appearance="outlined" class="overview__card">
+                <mat-card-header class="mb-2"
+                  ><mat-card-title>Progress Overview</mat-card-title></mat-card-header
+                >
+                <mat-card-content>
+                  <div class="overview__chart">
+                    <canvas
+                      baseChart
+                      [type]="progressChartType"
+                      [data]="progressChartData()"
+                      [options]="progressChartOptions()"
+                    ></canvas>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card appearance="outlined" class="overview__card">
+                <mat-card-header class="mb-2"
+                  ><mat-card-title>Recent Activity</mat-card-title></mat-card-header
+                >
+                <mat-card-content class="overview__activity">
+                  @for (activity of p.recentActivity; track trackActivity($index, activity)) {
+                    <div class="activity-row">
+                      <div class="activity-row__avatar" aria-hidden="true">
+                        {{ activity.avatar }}
+                      </div>
+                      <div class="activity-row__body">
+                        <p class="activity-row__text">
+                          <strong>{{ activity.user }}</strong>
+                          <span class="activity-row__action"> {{ activity.action }} </span>
+                          <span>{{ activity.target }}</span>
+                        </p>
+                        <p class="activity-row__time">{{ activity.time }}</p>
+                      </div>
+                    </div>
+                  }
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <aside class="overview__sidebar">
+              <mat-card appearance="outlined" class="overview__card">
+                <mat-card-header class="mb-2"
+                  ><mat-card-title>Task Stats</mat-card-title></mat-card-header
+                >
+                <mat-card-content class="task-stats">
+                  <div class="task-stats__row">
+                    <span class="task-stats__label">
+                      <span class="task-stats__dot task-stats__dot--done"></span>
+                      Completed
+                    </span>
+                    <strong>{{ p.tasks.completed }}</strong>
+                  </div>
+                  <div class="task-stats__row">
+                    <span class="task-stats__label">
+                      <span class="task-stats__dot task-stats__dot--progress"></span>
+                      In Progress
+                    </span>
+                    <strong>{{ p.tasks.inProgress }}</strong>
+                  </div>
+                  <div class="task-stats__row">
+                    <span class="task-stats__label">
+                      <span class="task-stats__dot task-stats__dot--todo"></span>
+                      To Do
+                    </span>
+                    <strong>{{ p.tasks.todo }}</strong>
+                  </div>
+                  <mat-divider />
+                  <div class="task-stats__row">
+                    <span>Total Tasks</span>
+                    <strong class="task-stats__total">{{ p.tasks.total }}</strong>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card appearance="outlined" class="overview__card">
+                <mat-card-header class="mb-2"
+                  ><mat-card-title>Project Details</mat-card-title></mat-card-header
+                >
+                <mat-card-content class="detail-fields">
+                  <div class="detail-field">
+                    <label for="start-date">Start Date</label>
+                    <p>{{ p.startDate | date: 'mediumDate' }}</p>
+                  </div>
+                  <div class="detail-field">
+                    <label for="due-date">Due Date</label>
+                    <p>{{ p.dueDate | date: 'mediumDate' }}</p>
+                  </div>
+                  <div class="detail-field">
+                    <label for="budget">Budget</label>
+                    <p>{{ p.budget }}</p>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card appearance="outlined" class="overview__card">
+                <mat-card-header class="mb-2 justify-between items-center">
+                  <mat-card-title>Tags</mat-card-title>
+                  <button mat-flat-button color="primary" aria-label="Add tag">
+                    <mat-icon>add</mat-icon>
+                    Add Tag
+                  </button>
+                </mat-card-header>
+                <mat-card-content>
+                  <mat-chip-set>
+                    @for (tag of p.tags; track tag) {
+                      <mat-chip>{{ tag }}</mat-chip>
+                    }
+                  </mat-chip-set>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card appearance="outlined" class="overview__card">
+                <mat-card-header class="mb-2"
+                  ><mat-card-title>Quick Actions</mat-card-title></mat-card-header
+                >
+                <mat-card-content class="quick-actions">
+                  <a
+                    mat-stroked-button
+                    class="quick-actions__button"
+                    [routerLink]="['/projects', p.id, 'board']"
+                  >
+                    <mat-icon>view_kanban</mat-icon>
+                    View Kanban Board
+                  </a>
+                  <button type="button" class="quick-actions__row">
+                    <span>
+                      <mat-icon>attach_file</mat-icon>
+                      Attachments
+                    </span>
+                    <span class="quick-actions__count">{{ p.attachments }}</span>
+                  </button>
+                  <button type="button" class="quick-actions__row">
+                    <span>
+                      <mat-icon>chat_bubble_outline</mat-icon>
+                      Comments
+                    </span>
+                    <span class="quick-actions__count">{{ p.comments }}</span>
+                  </button>
+                </mat-card-content>
+              </mat-card>
+            </aside>
+          </div>
+        }
+        @case ('team') {
+          <div class="team">
+            <mat-card appearance="outlined">
+              <mat-card-header class="justify-between item-center mb-2">
+                <mat-card-title>Team Members</mat-card-title>
+                <button mat-flat-button color="primary">
+                  <mat-icon>add</mat-icon>
+                  Add Member
+                </button>
+              </mat-card-header>
+              <mat-card-content class="team__list">
+                @for (member of p.team; track trackTeam($index, member)) {
+                  <div class="team-row">
+                    <div class="team-row__identity">
+                      <div class="team-row__avatar" aria-hidden="true">{{ member.avatar }}</div>
+                      <div>
+                        <p class="team-row__name">{{ member.name }}</p>
+                        <p class="team-row__role">{{ member.role }}</p>
+                        <p class="team-row__email">{{ member.email }}</p>
+                      </div>
+                    </div>
+                    <button mat-icon-button aria-label="Member options">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                  </div>
+                }
+              </mat-card-content>
+            </mat-card>
+          </div>
+        }
+        @default {
+          <div class="placeholder">
+            <mat-card appearance="outlined">
+              <mat-card-content class="placeholder__inner">
+                <mat-icon>hourglass_empty</mat-icon>
+                <p>{{ activeTab() }} content coming soon</p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        }
+      }
+    </div>
+  </div>
+} @else {
+  <div class="project-details project-details--missing">
+    <mat-card appearance="outlined">
+      <mat-card-content class="placeholder__inner">
+        <mat-icon>folder_off</mat-icon>
+        <p>Project not found.</p>
+        <button mat-stroked-button (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Projects
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+}

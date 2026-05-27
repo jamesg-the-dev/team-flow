@@ -1,0 +1,19 @@
+.dialog {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: min(32rem, 90vw);
+  }
+
+  &__subtitle {
+    margin: 0 0 0.5rem;
+    color: var(--sys-on-surface-variant);
+  }
+
+  &__row {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+  }
+}

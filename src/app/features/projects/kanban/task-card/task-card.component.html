@@ -1,0 +1,77 @@
+<article
+  class="task-card"
+  tabindex="0"
+  (click)="openTask.emit(task)"
+  (keyup.enter)="openTask.emit(task)"
+  (keyup.space)="openTask.emit(task)"
+>
+  <header class="task-card__header">
+    <h4 class="task-card__title">{{ task.title }}</h4>
+    <button
+      mat-icon-button
+      class="task-card__menu-btn"
+      [matMenuTriggerFor]="cardMenu"
+      (click)="$event.stopPropagation()"
+      aria-label="Task actions"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #cardMenu="matMenu">
+      <button mat-menu-item><mat-icon>edit</mat-icon><span>Edit</span></button>
+      <button mat-menu-item><mat-icon>content_copy</mat-icon><span>Duplicate</span></button>
+      <mat-divider />
+      <button mat-menu-item class="task-card__menu-item--destructive">
+        <mat-icon>delete</mat-icon>
+        <span>Delete</span>
+      </button>
+    </mat-menu>
+  </header>
+
+  @if (task.description) {
+    <p class="task-card__description">{{ task.description }}</p>
+  }
+
+  @if (task.labels.length) {
+    <div class="task-card__labels">
+      @for (label of task.labels; track label) {
+        <span class="task-card__label">{{ label }}</span>
+      }
+    </div>
+  }
+
+  <footer class="task-card__footer">
+    <div class="task-card__meta">
+      @if (task.comments > 0) {
+        <span class="task-card__meta-item" matTooltip="Comments">
+          <mat-icon>chat_bubble_outline</mat-icon>
+          {{ task.comments }}
+        </span>
+      }
+      @if (task.attachments > 0) {
+        <span class="task-card__meta-item" matTooltip="Attachments">
+          <mat-icon>attach_file</mat-icon>
+          {{ task.attachments }}
+        </span>
+      }
+      @if (task.dueDate) {
+        <span class="task-card__meta-item">
+          <mat-icon>event</mat-icon>
+          {{ task.dueDate }}
+        </span>
+      }
+    </div>
+    <div class="task-card__right">
+      <mat-icon
+        class="task-card__flag"
+        [class.task-card__flag--high]="task.priority === 'high'"
+        [class.task-card__flag--medium]="task.priority === 'medium'"
+        [class.task-card__flag--low]="task.priority === 'low'"
+        [matTooltip]="task.priority + ' priority'"
+        >flag</mat-icon
+      >
+      @if (task.assignee) {
+        <span class="task-card__avatar" [matTooltip]="task.assignee">{{ task.assignee }}</span>
+      }
+    </div>
+  </footer>
+</article>

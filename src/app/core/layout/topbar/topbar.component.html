@@ -1,0 +1,82 @@
+<header class="topbar">
+  <mat-form-field appearance="outline" class="topbar__search" subscriptSizing="dynamic">
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput placeholder="Search projects, tasks, or discussions…" />
+  </mat-form-field>
+
+  <div class="topbar__actions">
+    <button mat-flat-button color="primary" [matMenuTriggerFor]="newMenu">
+      <mat-icon>add</mat-icon>
+      New
+    </button>
+
+    <mat-menu #newMenu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>folder</mat-icon>
+        <span>New project</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>task_alt</mat-icon>
+        <span>New task</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>forum</mat-icon>
+        <span>New discussion</span>
+      </button>
+    </mat-menu>
+
+    <button
+      mat-icon-button
+      (click)="toggleTheme()"
+      [attr.aria-label]="'Theme: ' + themeMode()"
+      [matTooltip]="'Theme: ' + themeMode()"
+    >
+      @switch (themeMode()) {
+        @case ('light') {
+          <mat-icon>light_mode</mat-icon>
+        }
+        @case ('dark') {
+          <mat-icon>dark_mode</mat-icon>
+        }
+        @default {
+          <mat-icon>contrast</mat-icon>
+        }
+      }
+    </button>
+
+    <button
+      #notifTrigger="cdkOverlayOrigin"
+      cdkOverlayOrigin
+      mat-icon-button
+      [matBadge]="unreadCount() || null"
+      matBadgeColor="warn"
+      matBadgeSize="small"
+      [matBadgeHidden]="unreadCount() === 0"
+      aria-label="Notifications"
+      (click)="toggleNotifications()"
+    >
+      <mat-icon>notifications</mat-icon>
+    </button>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="notifTrigger"
+      [cdkConnectedOverlayOpen]="notificationsOpen()"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      [cdkConnectedOverlayPositions]="[
+        {
+          originX: 'end',
+          originY: 'bottom',
+          overlayX: 'end',
+          overlayY: 'top',
+          offsetY: 8,
+        },
+      ]"
+      (backdropClick)="closeNotifications()"
+      (detach)="closeNotifications()"
+    >
+      <app-notifications-panel (closed)="closeNotifications()" />
+    </ng-template>
+  </div>
+</header>

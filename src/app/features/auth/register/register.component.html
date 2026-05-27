@@ -1,0 +1,146 @@
+<div class="auth">
+  <aside class="auth__brand">
+    <div class="auth__brand-header">
+      <h1 class="auth__brand-title">TeamFlow</h1>
+      <p class="auth__brand-tagline">Join thousands of teams building better products.</p>
+    </div>
+
+    <div class="auth__brand-content">
+      <figure class="auth__testimonial">
+        <blockquote>
+          "TeamFlow transformed how our team collaborates. We shipped our last feature 40% faster."
+        </blockquote>
+        <figcaption>
+          <span class="auth__testimonial-avatar" aria-hidden="true"></span>
+          <div>
+            <p class="auth__testimonial-author">Sarah Chen</p>
+            <p class="auth__testimonial-role">Product Lead at Acme Inc</p>
+          </div>
+        </figcaption>
+      </figure>
+
+      <ul class="auth__stats">
+        @for (stat of stats; track stat.label) {
+          <li class="auth__stat">
+            <span class="auth__stat-value">{{ stat.value }}</span>
+            <span class="auth__stat-label">{{ stat.label }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <p class="auth__brand-footer">© {{ currentYear }} TeamFlow. All rights reserved.</p>
+  </aside>
+
+  <section class="auth__panel">
+    <div class="auth__form-wrapper">
+      <header class="auth__heading">
+        <h2>Create an account</h2>
+        <p>Get started with TeamFlow for free.</p>
+      </header>
+
+      <button mat-stroked-button type="button" class="auth__sso">
+        <mat-icon>code</mat-icon>
+        Continue with GitHub
+      </button>
+
+      <div class="auth__divider" role="separator">
+        <mat-divider class="auth__divider-line" />
+        <span class="auth__divider-label">Or register with</span>
+        <mat-divider class="auth__divider-line" />
+      </div>
+
+      <form class="auth__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Full name</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input
+            matInput
+            type="text"
+            formControlName="name"
+            placeholder="John Doe"
+            autocomplete="name"
+          />
+          @if (form.controls.name.touched && form.controls.name.hasError('required')) {
+            <mat-error>Name is required.</mat-error>
+          }
+          @if (form.controls.name.touched && form.controls.name.hasError('minlength')) {
+            <mat-error>Name must be at least 2 characters.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Work email</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="name@company.com"
+            autocomplete="email"
+          />
+          @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+            <mat-error>Email is required.</mat-error>
+          }
+          @if (form.controls.email.touched && form.controls.email.hasError('email')) {
+            <mat-error>Enter a valid email address.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Company name</mat-label>
+          <mat-icon matPrefix>business</mat-icon>
+          <input
+            matInput
+            type="text"
+            formControlName="company"
+            placeholder="Acme Inc"
+            autocomplete="organization"
+          />
+          @if (form.controls.company.touched && form.controls.company.hasError('required')) {
+            <mat-error>Company is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          hintLabel="Must be at least 8 characters"
+        >
+          <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            type="password"
+            formControlName="password"
+            placeholder="Create a strong password"
+            autocomplete="new-password"
+          />
+          @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+            <mat-error>Password is required.</mat-error>
+          }
+          @if (form.controls.password.touched && form.controls.password.hasError('minlength')) {
+            <mat-error>Password must be at least 8 characters.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-checkbox formControlName="terms" class="auth__terms">
+          I agree to the
+          <a href="#" class="auth__link">Terms of Service</a>
+          and
+          <a href="#" class="auth__link">Privacy Policy</a>.
+        </mat-checkbox>
+
+        <button mat-flat-button color="primary" type="submit" class="auth__submit">
+          Create account
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </button>
+      </form>
+
+      <p class="auth__footer">
+        Already have an account?
+        <a routerLink="/login" class="auth__link auth__link--strong">Sign in</a>
+      </p>
+    </div>
+  </section>
+</div>

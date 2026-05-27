@@ -1,0 +1,394 @@
+$spacing: (
+    0: 0,
+    1: 0.25rem,
+    2: 0.5rem,
+    3: 0.75rem,
+    4: 1rem,
+    5: 1.25rem,
+    6: 1.5rem,
+    8: 2rem,
+    10: 2.5rem,
+    12: 3rem,
+    14: 3.5rem,
+);
+
+// ---------- Display ----------
+.block {
+    display: block;
+}
+.inline-block {
+    display: inline-block;
+}
+.inline {
+    display: inline;
+}
+.hidden {
+    display: none;
+}
+.flex {
+    display: flex;
+}
+.inline-flex {
+    display: inline-flex;
+}
+.grid {
+    display: grid;
+}
+
+// ---------- Flex direction / wrap ----------
+.flex-row {
+    flex-direction: row;
+}
+.flex-row-reverse {
+    flex-direction: row-reverse;
+}
+.flex-col {
+    flex-direction: column;
+}
+.flex-col-reverse {
+    flex-direction: column-reverse;
+}
+.flex-wrap {
+    flex-wrap: wrap;
+}
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
+.flex-1 {
+    flex: 1 1 0%;
+}
+.flex-auto {
+    flex: 1 1 auto;
+}
+.flex-none {
+    flex: none;
+}
+
+// ---------- Align / justify ----------
+.items-start {
+    align-items: flex-start;
+}
+.items-center {
+    align-items: center;
+}
+.items-end {
+    align-items: flex-end;
+}
+.items-stretch {
+    align-items: stretch;
+}
+.items-baseline {
+    align-items: baseline;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+.justify-center {
+    justify-content: center;
+}
+.justify-end {
+    justify-content: flex-end;
+}
+.justify-between {
+    justify-content: space-between;
+}
+.justify-around {
+    justify-content: space-around;
+}
+.justify-evenly {
+    justify-content: space-evenly;
+}
+
+.self-start {
+    align-self: flex-start;
+}
+.self-center {
+    align-self: center;
+}
+.self-end {
+    align-self: flex-end;
+}
+.self-stretch {
+    align-self: stretch;
+}
+
+// ---------- Gap / padding / margin ----------
+@each $key, $value in $spacing {
+    .gap-#{$key} {
+        gap: $value;
+    }
+    .gap-x-#{$key} {
+        column-gap: $value;
+    }
+    .gap-y-#{$key} {
+        row-gap: $value;
+    }
+
+    .p-#{$key} {
+        padding: $value;
+    }
+    .pt-#{$key} {
+        padding-top: $value;
+    }
+    .pr-#{$key} {
+        padding-right: $value;
+    }
+    .pb-#{$key} {
+        padding-bottom: $value;
+    }
+    .pl-#{$key} {
+        padding-left: $value;
+    }
+    .px-#{$key} {
+        padding-left: $value;
+        padding-right: $value;
+    }
+    .py-#{$key} {
+        padding-top: $value;
+        padding-bottom: $value;
+    }
+
+    .m-#{$key} {
+        margin: $value;
+    }
+    .mt-#{$key} {
+        margin-top: $value;
+    }
+    .mr-#{$key} {
+        margin-right: $value;
+    }
+    .mb-#{$key} {
+        margin-bottom: $value;
+    }
+    .ml-#{$key} {
+        margin-left: $value;
+    }
+    .mx-#{$key} {
+        margin-left: $value;
+        margin-right: $value;
+    }
+    .my-#{$key} {
+        margin-top: $value;
+        margin-bottom: $value;
+    }
+    .w-#{$key} {
+        width: $value;
+    }
+    .h-#{$key} {
+        height: $value;
+    }
+}
+
+.m-auto {
+    margin: auto;
+}
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+.my-auto {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.ml-auto {
+    margin-left: auto;
+}
+.mr-auto {
+    margin-right: auto;
+}
+
+// ---------- Sizing ----------
+.w-full {
+    width: 100%;
+}
+.w-auto {
+    width: auto;
+}
+.w-screen {
+    width: 100vw;
+}
+.w-fit {
+    width: fit-content;
+}
+
+.h-full {
+    height: 100%;
+}
+.h-auto {
+    height: auto;
+}
+.h-screen {
+    height: 100vh;
+}
+.h-fit {
+    height: fit-content;
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+.min-h-0 {
+    min-height: 0;
+}
+.min-h-full {
+    min-height: 100%;
+}
+.min-h-screen {
+    min-height: 100vh;
+}
+
+.max-w-full {
+    max-width: 100%;
+}
+.max-h-full {
+    max-height: 100%;
+}
+
+// ---------- Text ----------
+.text-left {
+    text-align: left;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+
+.font-light {
+    font-weight: 300;
+}
+.font-normal {
+    font-weight: 400;
+}
+.font-medium {
+    font-weight: 500;
+}
+.font-semibold {
+    font-weight: 600;
+}
+.font-bold {
+    font-weight: 700;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
+.text-sm {
+    font-size: 0.875rem;
+}
+.text-base {
+    font-size: 1rem;
+}
+.text-lg {
+    font-size: 1.125rem;
+}
+.text-xl {
+    font-size: 1.25rem;
+}
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+.lowercase {
+    text-transform: lowercase;
+}
+.capitalize {
+    text-transform: capitalize;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// ---------- Colors (theme tokens) ----------
+.text-primary {
+    color: var(--sys-primary);
+}
+.text-on-surface {
+    color: var(--sys-on-surface);
+}
+.text-muted {
+    color: var(--sys-on-surface-variant);
+}
+.text-error {
+    color: var(--sys-error);
+}
+
+// ---------- Borders / radius ----------
+.rounded-none {
+    border-radius: 0;
+}
+.rounded-sm {
+    border-radius: 0.25rem;
+}
+.rounded {
+    border-radius: 0.5rem;
+}
+.rounded-md {
+    border-radius: 0.75rem;
+}
+.rounded-lg {
+    border-radius: 1rem;
+}
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.border {
+    border: 1px solid var(--sys-outline-variant);
+}
+.border-t {
+    border-top: 1px solid var(--sys-outline-variant);
+}
+.border-b {
+    border-bottom: 1px solid var(--sys-outline-variant);
+}
+
+// ---------- Position ----------
+.relative {
+    position: relative;
+}
+.absolute {
+    position: absolute;
+}
+.fixed {
+    position: fixed;
+}
+.sticky {
+    position: sticky;
+}
+
+// ---------- Overflow ----------
+.overflow-hidden {
+    overflow: hidden;
+}
+.overflow-auto {
+    overflow: auto;
+}
+.overflow-x-auto {
+    overflow-x: auto;
+}
+.overflow-y-auto {
+    overflow-y: auto;
+}
+
+// ---------- Cursor ----------
+.cursor-pointer {
+    cursor: pointer;
+}
+.cursor-not-allowed {
+    cursor: not-allowed;
+}
+
+// ---------- Misc ----------
+.transition {
+    transition: all 0.2s ease;
+}

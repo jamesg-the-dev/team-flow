@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.app-shell {
+  background-color: var(--sys-background);
+  color: var(--sys-on-background);
+
+  &__sidebar {
+    flex: 0 0 auto;
+  }
+
+  &__topbar {
+    flex: 0 0 auto;
+  }
+
+  &__content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+  }
+}

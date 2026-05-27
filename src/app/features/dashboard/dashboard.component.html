@@ -1,0 +1,113 @@
+<div class="dashboard">
+  <header class="dashboard__header">
+    <h1>Good morning, John!</h1>
+    <p>Here's what's happening with your projects today.</p>
+  </header>
+
+  <section class="dashboard__stats" aria-label="Project metrics">
+    @for (stat of stats(); track stat.label) {
+      <mat-card appearance="outlined" class="stat-card">
+        <div class="flex items-start justify-between gap-4 p-6">
+          <div class="flex flex-col gap-3">
+            <p class="m-0 text-xs uppercase stat-card__label">{{ stat.label }}</p>
+            <p class="stat-card__value">{{ stat.value }}</p>
+            <span class="stat-card__change stat-card__change--{{ stat.variant }}">
+              {{ stat.change }}
+            </span>
+          </div>
+          <div class="stat-card__icon stat-card__icon--{{ stat.variant }}">
+            <mat-icon>{{ stat.icon }}</mat-icon>
+          </div>
+        </div>
+      </mat-card>
+    }
+  </section>
+
+  <section class="dashboard__charts">
+    <mat-card appearance="outlined" class="dashboard__card dashboard__card--wide">
+      <mat-card-header class="mb-2">
+        <mat-card-title>Tasks Completed This Week</mat-card-title>
+        <mat-card-subtitle>Daily task completion trend</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="dashboard__chart-content">
+        <div class="dashboard__chart relative">
+          <canvas
+            baseChart
+            [type]="tasksChartType"
+            [data]="tasksChartData()"
+            [options]="tasksChartOptions()"
+          ></canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="dashboard__card">
+      <mat-card-header class="mb-2">
+        <mat-card-title>Team Velocity</mat-card-title>
+        <mat-card-subtitle>Story points per week</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="dashboard__chart-content">
+        <div class="dashboard__chart relative">
+          <canvas
+            baseChart
+            [type]="velocityChartType"
+            [data]="velocityChartData()"
+            [options]="velocityChartOptions()"
+          ></canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section class="dashboard__lower">
+    <mat-card appearance="outlined" class="h-full dashboard__card--wide">
+      <mat-card-header class="mb-2">
+        <mat-card-title>Active Projects</mat-card-title>
+        <mat-card-subtitle>Projects you're currently working on</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="project-list">
+        @for (project of activeProjects(); track project.name) {
+          <article class="project-item">
+            <div class="project-item__header">
+              <div>
+                <h4 class="project-item__name">{{ project.name }}</h4>
+                <p class="project-item__due">Due {{ project.dueDate }}</p>
+              </div>
+              <span class="project-item__progress-label">{{ project.progress }}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="project.progress" />
+            <div class="project-item__meta">
+              <span class="project-item__meta-item">
+                <mat-icon>group</mat-icon>
+                {{ project.team }} members
+              </span>
+              <span class="project-item__meta-item">{{ project.tasks }} tasks</span>
+            </div>
+          </article>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="dashboard__card">
+      <mat-card-header class="mb-2">
+        <mat-card-title>Recent Activity</mat-card-title>
+        <mat-card-subtitle>What your team is up to</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="activity-list">
+        @for (item of recentActivity(); track $index) {
+          <div class="activity-item">
+            <div class="activity-item__avatar" aria-hidden="true">{{ item.avatar }}</div>
+            <div class="activity-item__body">
+              <p class="activity-item__text">
+                <span class="activity-item__user">{{ item.user }}</span>
+                {{ item.action }}
+                <span class="activity-item__task">{{ item.task }}</span>
+              </p>
+              <p class="activity-item__time">{{ item.time }}</p>
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

@@ -1,0 +1,73 @@
+.sidebar {
+  width: 5rem;
+  padding: 0.75rem 0;
+  background-color: var(--sys-surface-container);
+  box-shadow: var(--elevation-1);
+
+  &__brand {
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--sys-primary);
+    color: var(--sys-on-primary);
+  }
+
+  &__nav {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    align-items: center;
+  }
+
+  &__link {
+    color: var(--sys-on-surface-variant);
+    text-decoration: none;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+
+    mat-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    &:hover {
+      background-color: var(--sys-surface-container-high);
+    }
+
+    &--active {
+      background-color: var(--sys-secondary-container);
+      color: var(--sys-on-secondary-container);
+
+      .sidebar__active-indicator {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__active-indicator {
+    position: absolute;
+    left: -0.25rem;
+    width: 0.25rem;
+    height: 2rem;
+    background-color: var(--sys-primary);
+    border-radius: 0 0.25rem 0.25rem 0;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &__avatar {
+    border-radius: 50%;
+    background-color: var(--sys-tertiary-container);
+    color: var(--sys-on-tertiary-container);
+  }
+
+  &__profile-btn.mat-mdc-icon-button {
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    --mdc-icon-button-state-layer-size: 3rem;
+  }
+}
