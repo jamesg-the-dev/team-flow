@@ -27,18 +27,10 @@
         <p>Sign in to your account to continue.</p>
       </header>
 
-      <button mat-stroked-button type="button" class="auth__sso">
-        <mat-icon>code</mat-icon>
-        Continue with GitHub
-      </button>
-
-      <div class="auth__divider" role="separator">
-        <mat-divider class="auth__divider-line" />
-        <span class="auth__divider-label">Or continue with</span>
-        <mat-divider class="auth__divider-line" />
-      </div>
-
       <form class="auth__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (errorMessage(); as msg) {
+          <p class="auth__error" role="alert">{{ msg }}</p>
+        }
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>Email</mat-label>
           <mat-icon matPrefix>mail</mat-icon>
@@ -76,12 +68,24 @@
         </mat-form-field>
 
         <div class="auth__form-row">
-          <mat-checkbox formControlName="remember">Remember me for 30 days</mat-checkbox>
+          <mat-checkbox class="relative overflow-hidden" formControlName="remember">
+            Remember me for 30 days
+          </mat-checkbox>
           <a routerLink="/forgot-password" class="auth__link">Forgot password?</a>
         </div>
 
-        <button mat-flat-button color="primary" type="submit" class="auth__submit">
-          Sign in
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="auth__submit"
+          [disabled]="loading()"
+        >
+          @if (loading()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            <span>Sign in</span>
+          }
           <mat-icon iconPositionEnd>arrow_forward</mat-icon>
         </button>
       </form>

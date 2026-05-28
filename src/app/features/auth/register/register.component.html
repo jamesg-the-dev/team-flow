@@ -39,18 +39,13 @@
         <p>Get started with TeamFlow for free.</p>
       </header>
 
-      <button mat-stroked-button type="button" class="auth__sso">
-        <mat-icon>code</mat-icon>
-        Continue with GitHub
-      </button>
-
-      <div class="auth__divider" role="separator">
-        <mat-divider class="auth__divider-line" />
-        <span class="auth__divider-label">Or register with</span>
-        <mat-divider class="auth__divider-line" />
-      </div>
-
       <form class="auth__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (errorMessage(); as msg) {
+          <p class="auth__error" role="alert">{{ msg }}</p>
+        }
+        @if (successMessage(); as msg) {
+          <p class="auth__success" role="status">{{ msg }}</p>
+        }
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>Full name</mat-label>
           <mat-icon matPrefix>person</mat-icon>
@@ -124,15 +119,25 @@
           }
         </mat-form-field>
 
-        <mat-checkbox formControlName="terms" class="auth__terms">
+        <mat-checkbox formControlName="terms" class="auth__terms relative">
           I agree to the
           <a href="#" class="auth__link">Terms of Service</a>
           and
           <a href="#" class="auth__link">Privacy Policy</a>.
         </mat-checkbox>
 
-        <button mat-flat-button color="primary" type="submit" class="auth__submit">
-          Create account
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="auth__submit"
+          [disabled]="loading()"
+        >
+          @if (loading()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            <span>Create account</span>
+          }
           <mat-icon iconPositionEnd>arrow_forward</mat-icon>
         </button>
       </form>

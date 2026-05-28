@@ -25,14 +25,21 @@
     mat-icon-button
     class="sidebar__profile-btn mt-auto"
     [matMenuTriggerFor]="profileMenu"
+    [matTooltip]="user()?.email ?? 'Account'"
+    matTooltipPosition="right"
     aria-label="Account menu"
   >
     <div class="sidebar__avatar w-full h-full flex items-center justify-center font-medium text-sm">
-      JD
+      {{ userInitials() }}
     </div>
   </button>
 
   <mat-menu #profileMenu="matMenu">
+    @if (user(); as currentUser) {
+      <div mat-menu-item disabled class="sidebar__menu-header">
+        <span>{{ currentUser.email }}</span>
+      </div>
+    }
     <button mat-menu-item>
       <mat-icon>person</mat-icon>
       <span>Profile</span>
@@ -41,7 +48,7 @@
       <mat-icon>tune</mat-icon>
       <span>Preferences</span>
     </button>
-    <button mat-menu-item>
+    <button mat-menu-item (click)="signOut()">
       <mat-icon>logout</mat-icon>
       <span>Sign out</span>
     </button>

@@ -19,11 +19,7 @@
     justify-content: space-between;
     width: 50%;
     padding: 3rem;
-    background: linear-gradient(
-      135deg,
-      var(--sys-primary) 0%,
-      color-mix(in srgb, var(--sys-primary) 80%, black) 100%
-    );
+    background: linear-gradient(135deg, var(--sys-primary) 0%, color-mix(in srgb, var(--sys-primary) 80%, black) 100%);
     color: var(--sys-on-primary);
 
     @media (min-width: 1024px) {
@@ -144,5 +140,23 @@
   &__terms {
     font-size: 0.875rem;
     color: var(--sys-on-surface-variant);
+  }
+
+  &__error {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background-color: color-mix(in srgb, var(--sys-error) 12%, transparent);
+    color: var(--sys-error);
+    font-size: 0.875rem;
+  }
+
+  &__success {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background-color: color-mix(in srgb, var(--sys-primary) 12%, transparent);
+    color: var(--sys-primary);
+    font-size: 0.875rem;
   }
 }

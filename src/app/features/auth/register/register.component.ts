@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,6 +7,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { AuthService } from '@core/services/auth.service';
 
 interface Stat {
   readonly value: string;
@@ -25,6 +28,7 @@ interface Stat {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
@@ -33,8 +37,12 @@ interface Stat {
 export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
 
   readonly currentYear = new Date().getFullYear();
+  readonly loading = signal(false);
+  readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
@@ -50,12 +58,30 @@ export class RegisterComponent {
     { value: '4.9', label: 'User rating' },
   ];
 
-  submit(): void {
-    if (this.form.invalid) {
+  async submit(): Promise<void> {
+    if (this.form.invalid || this.loading()) {
       this.form.markAllAsTouched();
       return;
     }
-    // TODO: replace with real registration call once the API is wired in.
-    this.router.navigate(['/dashboard']);
+
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+
+    try {
+      const { session } = await this.auth.signUp();
+      if (session) {
+        await this.router.navigateByUrl('/dashboard');
+      } else {
+        this.successMessage.set(
+          'Account created. Please check your email to confirm your account before signing in.',
+        );
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to create account.';
+      this.errorMessage.set(message);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

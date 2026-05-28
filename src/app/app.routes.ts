@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { authGuard, publicOnlyGuard } from '@core/guards/auth.guard';
+
 export const routes: Routes = [
   {
     path: '',
@@ -8,17 +10,21 @@ export const routes: Routes = [
   },
   {
     path: 'login',
+    canActivate: [publicOnlyGuard],
     loadComponent: () => import('@features/auth/login/login.component').then(m => m.LoginComponent),
     title: 'Sign in · TeamFlow',
   },
   {
     path: 'register',
+    canActivate: [publicOnlyGuard],
     loadComponent: () =>
       import('@features/auth/register/register.component').then(m => m.RegisterComponent),
     title: 'Create account · TeamFlow',
   },
   {
     path: '',
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
     loadComponent: () => import('@core/layout/layout.component').then(m => m.LayoutComponent),
     children: [
       {
