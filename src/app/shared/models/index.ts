@@ -3,7 +3,7 @@
  * Replace these with API-generated types once the backend is wired in.
  */
 
-export type Priority = 'low' | 'medium' | 'high';
+export type Priority = 'low' | 'medium' | 'high' | 'critical';
 
 export type TaskColumn = 'backlog' | 'todo' | 'in-progress' | 'review' | 'done';
 
@@ -21,10 +21,10 @@ export interface Task {
 }
 
 export interface Project {
-  id: number;
+  id: string;
   name: string;
   description: string;
-  status: 'active' | 'planning' | 'archived';
+  status: 'active' | 'planning' | 'on-hold' | 'completed' | 'archived';
   progress: number;
   team: string[];
   tasks: { total: number; completed: number };
@@ -33,7 +33,7 @@ export interface Project {
 }
 
 export interface ProjectTeamMember {
-  id: number;
+  id: string;
   name: string;
   avatar: string;
   role: string;
@@ -41,7 +41,7 @@ export interface ProjectTeamMember {
 }
 
 export interface ProjectActivityEntry {
-  id: number;
+  id: string;
   user: string;
   avatar: string;
   action: string;
@@ -55,10 +55,10 @@ export interface ProjectProgressPoint {
 }
 
 export interface ProjectDetails {
-  id: number;
+  id: string;
   name: string;
   description: string;
-  status: 'active' | 'planning' | 'archived';
+  status: 'active' | 'planning' | 'on-hold' | 'completed' | 'archived';
   progress: number;
   priority: Priority;
   startDate: string;

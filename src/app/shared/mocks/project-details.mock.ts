@@ -9,7 +9,7 @@ const PROGRESS_HISTORY = [
 
 const RECENT_ACTIVITY = [
   {
-    id: 1,
+    id: '1',
     user: 'Sarah Chen',
     avatar: 'SC',
     action: 'completed task',
@@ -17,7 +17,7 @@ const RECENT_ACTIVITY = [
     time: '2 hours ago',
   },
   {
-    id: 2,
+    id: '2',
     user: 'Mike Johnson',
     avatar: 'MJ',
     action: 'uploaded',
@@ -25,7 +25,7 @@ const RECENT_ACTIVITY = [
     time: '4 hours ago',
   },
   {
-    id: 3,
+    id: '3',
     user: 'Emily Davis',
     avatar: 'ED',
     action: 'commented on',
@@ -33,7 +33,7 @@ const RECENT_ACTIVITY = [
     time: '5 hours ago',
   },
   {
-    id: 4,
+    id: '4',
     user: 'Alex Kumar',
     avatar: 'AK',
     action: 'moved task',
@@ -43,16 +43,16 @@ const RECENT_ACTIVITY = [
 ];
 
 const TEAM = [
-  { id: 1, name: 'Sarah Chen', avatar: 'SC', role: 'Lead Designer', email: 'sarah@acme.com' },
-  { id: 2, name: 'Mike Johnson', avatar: 'MJ', role: 'Developer', email: 'mike@acme.com' },
-  { id: 3, name: 'Emily Davis', avatar: 'ED', role: 'UX Researcher', email: 'emily@acme.com' },
-  { id: 4, name: 'Alex Kumar', avatar: 'AK', role: 'Developer', email: 'alex@acme.com' },
-  { id: 5, name: 'Jessica Lee', avatar: 'JL', role: 'Product Manager', email: 'jessica@acme.com' },
+  { id: '1', name: 'Sarah Chen', avatar: 'SC', role: 'Lead Designer', email: 'sarah@acme.com' },
+  { id: '2', name: 'Mike Johnson', avatar: 'MJ', role: 'Developer', email: 'mike@acme.com' },
+  { id: '3', name: 'Emily Davis', avatar: 'ED', role: 'UX Researcher', email: 'emily@acme.com' },
+  { id: '4', name: 'Alex Kumar', avatar: 'AK', role: 'Developer', email: 'alex@acme.com' },
+  { id: '5', name: 'Jessica Lee', avatar: 'JL', role: 'Product Manager', email: 'jessica@acme.com' },
 ];
 
 export const PROJECT_DETAILS: readonly ProjectDetails[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Product Redesign',
     description:
       'Complete overhaul of the product interface and user experience to improve usability, modernize the visual design, and enhance overall customer satisfaction.',
@@ -72,6 +72,6 @@ export const PROJECT_DETAILS: readonly ProjectDetails[] = [
   },
 ];
 
-export function findProjectDetails(id: number): ProjectDetails | undefined {
+export function findProjectDetails(id: string): ProjectDetails | undefined {
   return PROJECT_DETAILS.find(p => p.id === id);
 }

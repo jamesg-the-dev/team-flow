@@ -2,7 +2,7 @@ import { Project } from '@shared/models';
 
 export const PROJECTS: readonly Project[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Product Redesign',
     description: 'Complete overhaul of the product interface and user experience',
     status: 'active',
@@ -13,7 +13,7 @@ export const PROJECTS: readonly Project[] = [
     priority: 'high',
   },
   {
-    id: 2,
+    id: '2',
     name: 'Mobile App v2',
     description: 'Next generation mobile application with enhanced features',
     status: 'active',
@@ -24,7 +24,7 @@ export const PROJECTS: readonly Project[] = [
     priority: 'high',
   },
   {
-    id: 3,
+    id: '3',
     name: 'API Migration',
     description: 'Migrate legacy REST API to GraphQL',
     status: 'active',
@@ -35,7 +35,7 @@ export const PROJECTS: readonly Project[] = [
     priority: 'medium',
   },
   {
-    id: 4,
+    id: '4',
     name: 'Marketing Website',
     description: 'New marketing site with updated branding',
     status: 'active',
@@ -46,7 +46,7 @@ export const PROJECTS: readonly Project[] = [
     priority: 'low',
   },
   {
-    id: 5,
+    id: '5',
     name: 'Documentation Portal',
     description: 'Technical documentation and API reference',
     status: 'planning',
@@ -57,7 +57,7 @@ export const PROJECTS: readonly Project[] = [
     priority: 'medium',
   },
   {
-    id: 6,
+    id: '6',
     name: 'Analytics Dashboard',
     description: 'Real-time analytics and reporting system',
     status: 'active',

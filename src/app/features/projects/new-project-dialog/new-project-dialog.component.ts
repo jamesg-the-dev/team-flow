@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Priority } from '@shared/models';
 
 export interface NewProjectResult {
+  readonly key: string;
   readonly name: string;
   readonly description: string;
   readonly dueDate: string;
@@ -41,13 +42,17 @@ export class NewProjectDialogComponent {
   protected readonly data = inject(MAT_DIALOG_DATA, { optional: true });
 
   readonly form = this.fb.nonNullable.group({
+    key: [
+      '',
+      [Validators.required, Validators.minLength(2), Validators.pattern(/^[A-Z][A-Z0-9_-]{1,9}$/)],
+    ],
     name: ['', [Validators.required, Validators.minLength(2)]],
     description: [''],
     dueDate: [''],
     priority: ['medium' as Priority, Validators.required],
   });
 
-  readonly priorities: readonly Priority[] = ['low', 'medium', 'high'];
+  readonly priorities: readonly Priority[] = ['low', 'medium', 'high', 'critical'];
 
   submit(): void {
     if (this.form.invalid) {

@@ -12,16 +12,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ChartConfiguration, ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { map } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize, map } from 'rxjs/operators';
 
+import { ProjectsApiService } from '@core/services/projects-api.service';
 import { ThemeService } from '@core/services/theme.service';
 import { withAlpha } from '@shared/utils/color';
 import { ProjectDetails } from '@shared/models';
-import { findProjectDetails } from '@shared/mocks/project-details.mock';
+import { toApiPriority, toApiStatus, toProjectDetails } from '@shared/utils/project-mappers';
 
 type TabKey = 'overview' | 'tasks' | 'team' | 'activity' | 'settings';
 
@@ -42,6 +46,7 @@ type TabKey = 'overview' | 'tasks' | 'team' | 'activity' | 'settings';
     MatInputModule,
     MatMenuModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatTabsModule,
     MatTooltipModule,
   ],
@@ -56,19 +61,17 @@ export class ProjectDetailsComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly theme = inject(ThemeService);
+  private readonly api = inject(ProjectsApiService);
+  private readonly snackbar = inject(MatSnackBar);
 
   private readonly routeId = toSignal(
-    this.route.paramMap.pipe(map(params => Number(params.get('id')))),
-    { initialValue: Number(this.route.snapshot.paramMap.get('id')) },
+    this.route.paramMap.pipe(map(params => params.get('id') ?? '')),
+    { initialValue: this.route.snapshot.paramMap.get('id') ?? '' },
   );
 
-  /** Source-of-truth copy used to reset edits. */
-  private readonly source = computed<ProjectDetails | undefined>(() =>
-    findProjectDetails(this.routeId()),
-  );
-
-  /** Working copy displayed in the UI; edits mutate this. */
-  readonly project = signal<ProjectDetails | undefined>(this.source());
+  readonly project = signal<ProjectDetails | undefined>(undefined);
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
 
   readonly activeTab = signal<TabKey>('overview');
 
@@ -81,21 +84,53 @@ export class ProjectDetailsComponent {
   ];
 
   constructor() {
-    // Keep working copy in sync if the route id changes.
-    this.route.paramMap.subscribe(() => this.project.set(this.source()));
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) this.load(id);
+    });
+  }
+
+  load(id: string): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    forkJoin({
+      project: this.api.get(id),
+      members: this.api.listMembers(id).pipe(catchError(() => of([]))),
+      stats: this.api.stats(id).pipe(catchError(() => of(undefined))),
+      activity: this.api.activity(id, { pageSize: 25 }).pipe(
+        map(page => page.items),
+        catchError(() => of([])),
+      ),
+      velocity: this.api.velocity(id, { weeks: 12 }).pipe(catchError(() => of([]))),
+    })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: ({ project, members, stats, activity, velocity }) => {
+          this.project.set(toProjectDetails(project, members, stats, activity, velocity));
+        },
+        error: err => {
+          console.error('Failed to load project', err);
+          this.error.set('Unable to load this project.');
+        },
+      });
   }
 
   readonly statusVariant = computed(() => {
     const s = this.project()?.status;
-    return s === 'active' ? 'success' : s === 'planning' ? 'warning' : 'neutral';
+    return s === 'active' || s === 'completed'
+      ? 'success'
+      : s === 'planning' || s === 'on-hold'
+        ? 'warning'
+        : 'neutral';
   });
 
   readonly priorityVariant = computed(() => {
     const p = this.project()?.priority;
-    return p === 'high' ? 'danger' : p === 'medium' ? 'warning' : 'neutral';
+    return p === 'critical' || p === 'high' ? 'danger' : p === 'medium' ? 'warning' : 'neutral';
   });
 
-  // ---- Chart ---------------------------------------------------------------
+  // ---- Chart -------------------------------------------------------------
 
   readonly progressChartType: ChartConfiguration<'bar'>['type'] = 'bar';
 
@@ -146,7 +181,70 @@ export class ProjectDetailsComponent {
   openEditDialog() {}
 
   saveEdits(): void {
-    // TODO: persist via API once available.
+    const current = this.project();
+    if (!current) return;
+    this.api
+      .update(current.id, {
+        name: current.name,
+        description: current.description || null,
+        priority: toApiPriority(current.priority),
+        startDate: current.startDate || null,
+        dueDate: current.dueDate || null,
+        colorHex: null,
+      })
+      .subscribe({
+        next: () => this.snackbar.open('Project updated.', 'Dismiss', { duration: 3000 }),
+        error: err => {
+          console.error('Failed to update project', err);
+          this.snackbar.open('Could not update project.', 'Dismiss', { duration: 4000 });
+        },
+      });
+  }
+
+  removeMember(userId: string): void {
+    const id = this.routeId();
+    if (!id) return;
+    this.api.removeMember(id, userId).subscribe({
+      next: () => {
+        const current = this.project();
+        if (current) {
+          this.project.set({ ...current, team: current.team.filter(m => m.id !== userId) });
+        }
+      },
+      error: err => {
+        console.error('Failed to remove member', err);
+        this.snackbar.open('Could not remove member.', 'Dismiss', { duration: 4000 });
+      },
+    });
+  }
+
+  archiveProject(): void {
+    const id = this.routeId();
+    if (!id) return;
+    this.api.updateStatus(id, { status: toApiStatus('archived') }).subscribe({
+      next: () => {
+        const current = this.project();
+        if (current) this.project.set({ ...current, status: 'archived' });
+        this.snackbar.open('Project archived.', 'Dismiss', { duration: 3000 });
+      },
+      error: err => {
+        console.error('Failed to archive project', err);
+        this.snackbar.open('Could not archive project.', 'Dismiss', { duration: 4000 });
+      },
+    });
+  }
+
+  deleteProject(): void {
+    const id = this.routeId();
+    const name = this.project()?.name ?? 'this project';
+    if (!id || !confirm(`Delete ${name}? This cannot be undone.`)) return;
+    this.api.remove(id).subscribe({
+      next: () => this.router.navigate(['/projects']),
+      error: err => {
+        console.error('Failed to delete project', err);
+        this.snackbar.open('Could not delete project.', 'Dismiss', { duration: 4000 });
+      },
+    });
   }
 
   updateField<K extends keyof ProjectDetails>(key: K, value: ProjectDetails[K]): void {
@@ -159,11 +257,11 @@ export class ProjectDetailsComponent {
     this.router.navigate(['/projects']);
   }
 
-  trackTeam(_index: number, member: { id: number }): number {
+  trackTeam(_index: number, member: { id: string }): string {
     return member.id;
   }
 
-  trackActivity(_index: number, item: { id: number }): number {
+  trackActivity(_index: number, item: { id: string }): string {
     return item.id;
   }
 }

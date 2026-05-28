@@ -5,6 +5,24 @@
     <p class="dialog__subtitle">Set up a new project for your team.</p>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Project key</mat-label>
+      <input
+        matInput
+        formControlName="key"
+        placeholder="e.g. TEAM"
+        maxlength="10"
+        (input)="form.controls.key.setValue(($any($event.target).value || '').toUpperCase())"
+      />
+      <mat-hint>Short uppercase identifier (2–10 chars).</mat-hint>
+      @if (form.controls.key.touched && form.controls.key.hasError('required')) {
+        <mat-error>Project key is required.</mat-error>
+      }
+      @if (form.controls.key.touched && form.controls.key.hasError('pattern')) {
+        <mat-error>Use 2–10 uppercase letters, digits, `_` or `-`.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Project name</mat-label>
       <input matInput formControlName="name" placeholder="Enter project name" />
       @if (form.controls.name.touched && form.controls.name.hasError('required')) {

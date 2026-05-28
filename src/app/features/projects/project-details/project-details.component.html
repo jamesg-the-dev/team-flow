@@ -16,7 +16,7 @@
               <mat-icon>star_outline</mat-icon>
               <span>Add to favorites</span>
             </button>
-            <button mat-menu-item>
+            <button mat-menu-item (click)="archiveProject()">
               <mat-icon>archive</mat-icon>
               <span>Archive project</span>
             </button>
@@ -25,7 +25,7 @@
               <span>Edit</span>
             </button>
             <mat-divider />
-            <button mat-menu-item class="menu-item--destructive">
+            <button mat-menu-item class="menu-item--destructive" (click)="deleteProject()">
               <mat-icon>delete</mat-icon>
               <span>Delete project</span>
             </button>
@@ -41,10 +41,12 @@
           <span class="status-chip status-chip--{{ priorityVariant() }}">
             {{ p.priority }} priority
           </span>
-          <span class="project-details__meta-item">
-            <mat-icon>event</mat-icon>
-            Due {{ p.dueDate | date: 'mediumDate' }}
-          </span>
+          @if (p.dueDate) {
+            <span class="project-details__meta-item">
+              <mat-icon>event</mat-icon>
+              Due {{ p.dueDate | date: 'mediumDate' }}
+            </span>
+          }
           <span class="project-details__meta-item">
             <mat-icon>group</mat-icon>
             {{ p.team.length }} members
@@ -254,9 +256,23 @@
                         <p class="team-row__email">{{ member.email }}</p>
                       </div>
                     </div>
-                    <button mat-icon-button aria-label="Member options">
+                    <button
+                      mat-icon-button
+                      [matMenuTriggerFor]="memberMenu"
+                      aria-label="Member options"
+                    >
                       <mat-icon>more_vert</mat-icon>
                     </button>
+                    <mat-menu #memberMenu="matMenu">
+                      <button
+                        mat-menu-item
+                        class="menu-item--destructive"
+                        (click)="removeMember(member.id)"
+                      >
+                        <mat-icon>person_remove</mat-icon>
+                        <span>Remove from project</span>
+                      </button>
+                    </mat-menu>
                   </div>
                 }
               </mat-card-content>
@@ -275,6 +291,28 @@
         }
       }
     </div>
+  </div>
+} @else if (loading()) {
+  <div class="project-details project-details--missing">
+    <mat-card appearance="outlined">
+      <mat-card-content class="placeholder__inner">
+        <mat-spinner diameter="36" />
+        <p>Loading project…</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+} @else if (error()) {
+  <div class="project-details project-details--missing">
+    <mat-card appearance="outlined">
+      <mat-card-content class="placeholder__inner">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error() }}</p>
+        <button mat-stroked-button (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Projects
+        </button>
+      </mat-card-content>
+    </mat-card>
   </div>
 } @else {
   <div class="project-details project-details--missing">

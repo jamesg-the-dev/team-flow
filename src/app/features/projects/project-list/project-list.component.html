@@ -45,7 +45,21 @@
     </mat-button-toggle-group>
   </div>
 
-  @if (filteredProjects().length === 0) {
+  @if (loading()) {
+    <div class="projects__empty">
+      <mat-spinner diameter="36" />
+      <p>Loading projects…</p>
+    </div>
+  } @else if (error()) {
+    <div class="projects__empty">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button (click)="refresh()">
+        <mat-icon>refresh</mat-icon>
+        Try again
+      </button>
+    </div>
+  } @else if (filteredProjects().length === 0) {
     <div class="projects__empty">
       <mat-icon>folder_off</mat-icon>
       <p>No projects match your filters.</p>
@@ -81,9 +95,17 @@
                 <span>Duplicate</span>
               </button>
               <mat-divider />
-              <button mat-menu-item class="menu-item--destructive">
+              <button mat-menu-item (click)="archive(project, $event)">
                 <mat-icon>archive</mat-icon>
                 <span>Archive</span>
+              </button>
+              <button
+                mat-menu-item
+                class="menu-item--destructive"
+                (click)="remove(project, $event)"
+              >
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
               </button>
             </mat-menu>
           </div>
@@ -172,9 +194,17 @@
               <span>Duplicate</span>
             </button>
             <mat-divider />
-            <button mat-menu-item class="menu-item--destructive">
+            <button mat-menu-item (click)="archive(project, $event)">
               <mat-icon>archive</mat-icon>
               <span>Archive</span>
+            </button>
+            <button
+              mat-menu-item
+              class="menu-item--destructive"
+              (click)="remove(project, $event)"
+            >
+              <mat-icon>delete</mat-icon>
+              <span>Delete</span>
             </button>
           </mat-menu>
         </div>

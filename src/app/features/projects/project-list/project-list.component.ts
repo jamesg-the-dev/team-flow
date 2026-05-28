@@ -13,14 +13,23 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { finalize } from 'rxjs/operators';
 
+import { ProjectsApiService } from '@core/services/projects-api.service';
 import { Project } from '@shared/models';
-import { PROJECTS } from '@shared/mocks/projects.mock';
+import { ProjectDto, ProjectSummaryDto } from '@shared/models/project-api';
+import {
+  projectDtoToListItem,
+  summaryToProjectListItem,
+  toApiPriority,
+} from '@shared/utils/project-mappers';
 import {
   NewProjectDialogComponent,
   NewProjectResult,
-} from '../new-project-dialog/new-project-dialog.component';
+} from '@features/projects/new-project-dialog/new-project-dialog.component';
 
 type ViewMode = 'grid' | 'list';
 type StatusFilter = 'all' | Project['status'];
@@ -42,17 +51,20 @@ type StatusFilter = 'all' | Project['status'];
     MatInputModule,
     MatMenuModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatTooltipModule,
   ],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss',
-  host:{
-    class: 'block'
+  host: {
+    class: 'block',
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectListComponent {
   private readonly dialog = inject(MatDialog);
+  private readonly api = inject(ProjectsApiService);
+  private readonly snackbar = inject(MatSnackBar);
 
   readonly view = signal<ViewMode>('grid');
   readonly status = signal<StatusFilter>('all');
@@ -62,7 +74,9 @@ export class ProjectListComponent {
     initialValue: this.searchControl.value,
   });
 
-  private readonly projects = signal<readonly Project[]>(PROJECTS);
+  private readonly projects = signal<readonly Project[]>([]);
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
 
   readonly filteredProjects = computed<readonly Project[]>(() => {
     const query = this.search().trim().toLowerCase();
@@ -82,8 +96,30 @@ export class ProjectListComponent {
     { value: 'all', label: 'All' },
     { value: 'active', label: 'Active' },
     { value: 'planning', label: 'Planning' },
+    { value: 'on-hold', label: 'On hold' },
+    { value: 'completed', label: 'Completed' },
     { value: 'archived', label: 'Archived' },
   ];
+
+  constructor() {
+    this.refresh();
+  }
+
+  refresh(): void {
+    this.loading.set(true);
+    this.error.set(null);
+    this.api
+      .list({ pageSize: 100 })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: page =>
+          this.projects.set(page.items.map((s: ProjectSummaryDto) => summaryToProjectListItem(s))),
+        error: err => {
+          console.error('Failed to load projects', err);
+          this.error.set('Unable to load projects. Please try again.');
+        },
+      });
+  }
 
   openNewProject(): void {
     this.dialog
@@ -93,26 +129,60 @@ export class ProjectListComponent {
       )
       .afterClosed()
       .subscribe(result => {
-        if (!result) {
-          return;
-        }
-        // TODO: persist via API once available. For now seed the local list.
-        const next: Project = {
-          id: Math.max(0, ...this.projects().map(p => p.id)) + 1,
-          name: result.name,
-          description: result.description,
-          status: 'planning',
-          progress: 0,
-          team: [],
-          tasks: { total: 0, completed: 0 },
-          dueDate: result.dueDate || '—',
-          priority: result.priority,
-        };
-        this.projects.update(projects => [next, ...projects]);
+        if (!result) return;
+        this.api
+          .create({
+            key: result.key,
+            name: result.name,
+            description: result.description || null,
+            priority: toApiPriority(result.priority),
+            startDate: null,
+            dueDate: result.dueDate || null,
+            colorHex: null,
+          })
+          .subscribe({
+            next: created => this.prependProject(created),
+            error: err => {
+              console.error('Failed to create project', err);
+              this.snackbar.open(err?.error?.detail ?? 'Could not create project.', 'Dismiss', {
+                duration: 4000,
+              });
+            },
+          });
       });
   }
 
-  trackById(_index: number, project: Project): number {
+  archive(project: Project, event?: Event): void {
+    event?.stopPropagation();
+    this.api.updateStatus(project.id, { status: 'Archived' }).subscribe({
+      next: () =>
+        this.projects.update(list =>
+          list.map(p => (p.id === project.id ? { ...p, status: 'archived' } : p)),
+        ),
+      error: err => {
+        console.error('Failed to archive project', err);
+        this.snackbar.open('Could not archive project.', 'Dismiss', { duration: 4000 });
+      },
+    });
+  }
+
+  remove(project: Project, event?: Event): void {
+    event?.stopPropagation();
+    if (!confirm(`Delete project "${project.name}"? This cannot be undone.`)) return;
+    this.api.remove(project.id).subscribe({
+      next: () => this.projects.update(list => list.filter(p => p.id !== project.id)),
+      error: err => {
+        console.error('Failed to delete project', err);
+        this.snackbar.open('Could not delete project.', 'Dismiss', { duration: 4000 });
+      },
+    });
+  }
+
+  trackById(_index: number, project: Project): string {
     return project.id;
+  }
+
+  private prependProject(dto: ProjectDto): void {
+    this.projects.update(list => [projectDtoToListItem(dto), ...list]);
   }
 }
