@@ -1,6 +1,6 @@
 // Shared styles used by all settings panel components.
 // Each panel component @uses this partial so its encapsulated styles
-// have access to the common .panel, .pref, .form, .badge, .avatar rules.
+// have access to the common .panel, .pref, .form, .avatar rules.
 
 :host {
   display: block;
@@ -108,21 +108,7 @@
   }
 }
 
-.badge {
-  display: inline-block;
-  padding: 0.125rem 0.625rem;
-  margin-top: 0.5rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  border-radius: 999px;
-  background: var(--sys-secondary-container);
-  color: var(--sys-on-secondary-container);
 
-  &--success {
-    background: color-mix(in srgb, var(--sys-tertiary) 18%, transparent);
-    color: var(--sys-tertiary);
-  }
-}
 
 .avatar {
   display: inline-flex;

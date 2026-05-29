@@ -76,28 +76,7 @@
     line-height: 1;
   }
 
-  &__change {
-    align-self: flex-start;
-    padding: 0.25rem 0.625rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-
-    &--success {
-      background-color: color-mix(in srgb, var(--sys-tertiary) 16%, transparent);
-      color: var(--sys-tertiary);
-    }
-
-    &--warning {
-      background-color: color-mix(in srgb, #f59e0b 18%, transparent);
-      color: #b45309;
-    }
-
-    &--danger {
-      background-color: color-mix(in srgb, var(--sys-error) 16%, transparent);
-      color: var(--sys-error);
-    }
-  }
+  // ...existing code...
 
   &__icon {
     display: flex;
@@ -169,14 +148,7 @@
     color: var(--sys-on-surface-variant);
   }
 
-  &__progress-label {
-    padding: 0.125rem 0.625rem;
-    border-radius: 999px;
-    background-color: var(--sys-secondary-container);
-    color: var(--sys-on-secondary-container);
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
+  // ...existing code...
 
   &__meta {
     display: flex;

@@ -1,6 +1,7 @@
 @use './styles/theme';
 @use './styles/elevation';
 @use './styles/utilities';
+@use './styles/pill'; // Importing the new _pill.scss utility
 @use '@angular/cdk/overlay-prebuilt.css';
 
 html,

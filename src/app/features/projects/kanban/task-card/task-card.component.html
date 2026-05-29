@@ -34,7 +34,7 @@
   @if (task.labels.length) {
     <div class="task-card__labels">
       @for (label of task.labels; track label) {
-        <span class="task-card__label">{{ label }}</span>
+        <span class="pill pill--xs pill--soft">{{ label }}</span>
       }
     </div>
   }

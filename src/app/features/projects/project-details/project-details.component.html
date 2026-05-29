@@ -37,8 +37,8 @@
         <h1 class="project-details__title">{{ p.name }}</h1>
 
         <div class="project-details__meta">
-          <span class="status-chip status-chip--{{ statusVariant() }}">{{ p.status }}</span>
-          <span class="status-chip status-chip--{{ priorityVariant() }}">
+          <span class="pill pill--sm pill--{{ statusVariant() }}">{{ p.status }}</span>
+          <span class="pill pill--sm pill--{{ priorityVariant() }}">
             {{ p.priority }} priority
           </span>
           @if (p.dueDate) {

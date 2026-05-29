@@ -56,15 +56,7 @@
   align-items: center;
   gap: 0.5rem;
 
-  &__badge {
-    padding: 0 0.4375rem;
-    border-radius: 999px;
-    background: var(--sys-error);
-    color: var(--sys-on-error);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    line-height: 1.25rem;
-  }
+
 }
 
 .notifications {

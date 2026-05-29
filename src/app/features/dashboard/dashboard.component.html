@@ -73,7 +73,7 @@
                 <h4 class="project-item__name">{{ project.name }}</h4>
                 <p class="project-item__due">Due {{ project.dueDate }}</p>
               </div>
-              <span class="project-item__progress-label">{{ project.progress }}%</span>
+              <span class="pill pill--xs pill--neutral">{{ project.progress }}%</span>
             </div>
             <mat-progress-bar mode="determinate" [value]="project.progress" />
             <div class="project-item__meta">

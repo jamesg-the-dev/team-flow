@@ -132,7 +132,7 @@
                   @if (comment.reactions?.length) {
                     <div class="comment__reactions">
                       @for (reaction of comment.reactions; track reaction.emoji) {
-                        <button class="reaction" type="button">
+                        <button class="pill pill--outlined" type="button">
                           <span>{{ reaction.emoji }}</span>
                           <span>{{ reaction.count }}</span>
                         </button>

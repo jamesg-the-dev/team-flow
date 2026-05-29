@@ -1,0 +1,67 @@
+// Pill utility class for status badges, chips, and labels
+// Usage: <span class="pill pill--xs pill--success">Active</span>
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 500;
+  line-height: 1;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  border: none;
+  background: var(--sys-secondary-container);
+  color: var(--sys-on-secondary-container);
+  transition: background 0.2s, color 0.2s;
+}
+
+// Sizes
+.pill--xs {
+  font-size: 0.6875rem;
+  padding: 0.125rem 0.625rem;
+  font-weight: 600;
+}
+.pill--sm {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+// Tones
+.pill--neutral {
+  background: var(--sys-secondary-container);
+  color: var(--sys-on-secondary-container);
+}
+.pill--success {
+  background: color-mix(in srgb, var(--sys-tertiary) 18%, transparent);
+  color: var(--sys-tertiary);
+}
+.pill--warning {
+  background: color-mix(in srgb, #f59e0b 18%, transparent);
+  color: #b45309;
+}
+.pill--danger {
+  background: color-mix(in srgb, var(--sys-error) 16%, transparent);
+  color: var(--sys-error);
+}
+.pill--error {
+  background: var(--sys-error);
+  color: var(--sys-on-error);
+}
+
+// Outlined and soft variants
+.pill--outlined {
+  background: var(--sys-surface-container);
+  color: var(--sys-on-surface);
+  border: 1px solid var(--sys-outline-variant);
+}
+.pill--dashed {
+  background: transparent;
+  color: var(--sys-on-surface-variant);
+  border: 1px dashed var(--sys-outline);
+}
+.pill--soft {
+  background: color-mix(in srgb, var(--sys-secondary-container) 80%, transparent);
+  color: var(--sys-on-secondary-container);
+}
