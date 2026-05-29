@@ -1,0 +1,56 @@
+<div class="panel">
+  <header class="panel__header">
+    <h1 class="panel__title">Profile</h1>
+    <p class="panel__subtitle">Manage your personal information</p>
+  </header>
+
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title class="card-title">Profile Photo</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="photo-row">
+        <span class="avatar avatar--xl">JD</span>
+        <div class="photo-row__actions">
+          <button mat-stroked-button>Change photo</button>
+          <button mat-button>Remove</button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title class="card-title">Personal Information</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form class="form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="form__row form__row--two">
+          <mat-form-field appearance="outline">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" />
+          </mat-form-field>
+        </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Job Title</mat-label>
+          <input matInput formControlName="jobTitle" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Bio</mat-label>
+          <textarea matInput rows="4" formControlName="bio"></textarea>
+        </mat-form-field>
+        <div class="form__actions">
+          <button mat-flat-button color="primary" type="submit">Save Changes</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

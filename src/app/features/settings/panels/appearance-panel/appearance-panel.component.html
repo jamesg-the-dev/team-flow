@@ -1,0 +1,50 @@
+<div class="panel">
+  <header class="panel__header">
+    <h1 class="panel__title">Appearance</h1>
+    <p class="panel__subtitle">Customize how TeamFlow looks</p>
+  </header>
+
+  <mat-card appearance="outlined">
+    <mat-card-header><mat-card-title class="card-title">Theme</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <div class="theme-grid">
+        @for (option of themeOptions; track option) {
+          <button
+            type="button"
+            class="theme-tile"
+            [class.theme-tile--active]="themeMode() === option"
+            [class.theme-tile--light]="option === 'light'"
+            [class.theme-tile--dark]="option === 'dark'"
+            [class.theme-tile--system]="option === 'system'"
+            (click)="setTheme(option)"
+          >
+            <span class="theme-tile__preview" aria-hidden="true"></span>
+            <span class="theme-tile__label">{{ option }}</span>
+          </button>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-header><mat-card-title class="card-title">Display</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <ul class="pref-list">
+        <li class="pref">
+          <div class="pref__meta">
+            <p class="pref__label">Compact mode</p>
+            <p class="pref__description">Use a more compact layout</p>
+          </div>
+          <mat-slide-toggle />
+        </li>
+        <li class="pref">
+          <div class="pref__meta">
+            <p class="pref__label">Show profile photos</p>
+            <p class="pref__description">Display user avatars throughout the app</p>
+          </div>
+          <mat-slide-toggle [checked]="true" />
+        </li>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+</div>

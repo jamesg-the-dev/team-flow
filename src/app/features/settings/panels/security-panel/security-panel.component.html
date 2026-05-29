@@ -1,0 +1,66 @@
+<div class="panel">
+  <header class="panel__header">
+    <h1 class="panel__title">Security</h1>
+    <p class="panel__subtitle">Manage your account security settings</p>
+  </header>
+
+  <mat-card appearance="outlined">
+    <mat-card-header><mat-card-title class="card-title">Password</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <form class="form" [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+        <mat-form-field appearance="outline">
+          <mat-label>Current Password</mat-label>
+          <input matInput type="password" formControlName="current" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>New Password</mat-label>
+          <input matInput type="password" formControlName="next" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Confirm New Password</mat-label>
+          <input matInput type="password" formControlName="confirm" />
+        </mat-form-field>
+        <div class="form__actions">
+          <button mat-flat-button color="primary" type="submit">Update Password</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-header
+      ><mat-card-title class="card-title"
+        >Two-Factor Authentication</mat-card-title
+      ></mat-card-header
+    >
+    <mat-card-content>
+      <div class="pref">
+        <div class="pref__meta">
+          <p class="pref__label">Authenticator App</p>
+          <p class="pref__description">Use an authenticator app to generate verification codes</p>
+          <span class="badge badge--success">Enabled</span>
+        </div>
+        <button mat-stroked-button>Configure</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-header
+      ><mat-card-title class="card-title">Active Sessions</mat-card-title></mat-card-header
+    >
+    <mat-card-content>
+      <ul class="pref-list">
+        @for (session of sessions; track session.id) {
+          <li class="pref">
+            <div class="pref__meta">
+              <p class="pref__label">{{ session.device }}</p>
+              <p class="pref__description">{{ session.location }} · {{ session.time }}</p>
+            </div>
+            <button mat-button [disabled]="session.current">Revoke</button>
+          </li>
+        }
+      </ul>
+    </mat-card-content>
+  </mat-card>
+</div>

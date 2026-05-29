@@ -1,0 +1,148 @@
+// Shared styles used by all settings panel components.
+// Each panel component @uses this partial so its encapsulated styles
+// have access to the common .panel, .pref, .form, .badge, .avatar rules.
+
+:host {
+  display: block;
+}
+
+.panel {
+  max-width: 42rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &--wide {
+    max-width: 56rem;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    &--row {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: var(--sys-on-surface-variant);
+  }
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  &__row {
+    &--two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+  }
+
+  &__actions {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: flex-start;
+  }
+}
+
+.pref-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pref {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__label {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  &__description {
+    margin: 0.125rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--sys-on-surface-variant);
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.125rem 0.625rem;
+  margin-top: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--sys-secondary-container);
+  color: var(--sys-on-secondary-container);
+
+  &--success {
+    background: color-mix(in srgb, var(--sys-tertiary) 18%, transparent);
+    color: var(--sys-tertiary);
+  }
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--sys-tertiary-container);
+  color: var(--sys-on-tertiary-container);
+  font-weight: 600;
+  flex-shrink: 0;
+
+  &--md {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.75rem;
+  }
+
+  &--xl {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.125rem;
+  }
+}

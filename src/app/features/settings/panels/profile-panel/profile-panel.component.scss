@@ -1,0 +1,12 @@
+@use '../panel-shared' as *;
+
+.photo-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  &__actions {
+    display: inline-flex;
+    gap: 0.5rem;
+  }
+}

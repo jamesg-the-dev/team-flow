@@ -63,9 +63,8 @@ export const routes: Routes = [
       },
       {
         path: 'settings',
-        loadComponent: () =>
-          import('@features/settings/settings.component').then(m => m.SettingsComponent),
-        title: 'Settings · TeamFlow',
+        loadChildren: () =>
+          import('@features/settings/settings.routes').then(m => m.SETTINGS_ROUTES),
       },
     ],
   },

@@ -1,0 +1,40 @@
+<div class="panel">
+  <header class="panel__header">
+    <h1 class="panel__title">Billing</h1>
+    <p class="panel__subtitle">Manage your subscription and payment methods</p>
+  </header>
+
+  <mat-card appearance="outlined">
+    <mat-card-header
+      ><mat-card-title class="card-title">Current Plan</mat-card-title></mat-card-header
+    >
+    <mat-card-content>
+      <div class="billing-row">
+        <div>
+          <p class="billing-row__plan">Free Plan</p>
+          <p class="pref__description">Up to 5 team members</p>
+          <p class="pref__description billing-row__usage">3 of 5 seats used</p>
+        </div>
+        <button mat-flat-button color="primary">Upgrade Plan</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-header
+      ><mat-card-title class="card-title">Payment Method</mat-card-title></mat-card-header
+    >
+    <mat-card-content>
+      <div class="payment">
+        <div class="payment__info">
+          <span class="payment__icon"><mat-icon>credit_card</mat-icon></span>
+          <div>
+            <p class="pref__label">•••• •••• •••• 4242</p>
+            <p class="pref__description">Expires 12/2026</p>
+          </div>
+        </div>
+        <button mat-stroked-button>Update</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

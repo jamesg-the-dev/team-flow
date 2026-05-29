@@ -1,0 +1,19 @@
+@use '../panel-shared' as *;
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+
+  &__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .badge {
+      margin: 0;
+    }
+  }
+}

@@ -1,0 +1,44 @@
+<div class="panel">
+  <header class="panel__header">
+    <h1 class="panel__title">Notifications</h1>
+    <p class="panel__subtitle">Manage how you receive notifications</p>
+  </header>
+
+  <mat-card appearance="outlined">
+    <mat-card-header
+      ><mat-card-title class="card-title">Email Notifications</mat-card-title></mat-card-header
+    >
+    <mat-card-content>
+      <ul class="pref-list">
+        @for (pref of emailPrefs; track pref.id) {
+          <li class="pref">
+            <div class="pref__meta">
+              <p class="pref__label">{{ pref.label }}</p>
+              <p class="pref__description">{{ pref.description }}</p>
+            </div>
+            <mat-slide-toggle [checked]="pref.enabled" />
+          </li>
+        }
+      </ul>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-header
+      ><mat-card-title class="card-title">Push Notifications</mat-card-title></mat-card-header
+    >
+    <mat-card-content>
+      <ul class="pref-list">
+        @for (pref of pushPrefs; track pref.id) {
+          <li class="pref">
+            <div class="pref__meta">
+              <p class="pref__label">{{ pref.label }}</p>
+              <p class="pref__description">{{ pref.description }}</p>
+            </div>
+            <mat-slide-toggle [checked]="pref.enabled" />
+          </li>
+        }
+      </ul>
+    </mat-card-content>
+  </mat-card>
+</div>
