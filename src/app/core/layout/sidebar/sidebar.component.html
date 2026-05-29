@@ -30,13 +30,11 @@
     aria-label="Account menu"
   >
     @if (avatarPath(); as path) {
-      <img
-        class="sidebar__avatar sidebar__avatar--image w-full h-full"
-        [src]="path"
-        alt="Avatar"
-      />
+      <img class="sidebar__avatar sidebar__avatar--image w-full h-full" [src]="path" alt="Avatar" />
     } @else {
-      <div class="sidebar__avatar w-full h-full flex items-center justify-center font-medium text-sm">
+      <div
+        class="sidebar__avatar w-full h-full flex items-center justify-center font-medium text-sm"
+      >
         {{ userInitials() }}
       </div>
     }
@@ -48,13 +46,12 @@
         @if (displayName(); as name) {
           <span class="sidebar__menu-name">{{ name }}</span>
         }
-        <span class="sidebar__menu-email">{{ currentUser.email }}</span>
       </div>
     }
-    <button mat-menu-item>
+    <a mat-menu-item routerLink="/settings/profile">
       <mat-icon>person</mat-icon>
       <span>Profile</span>
-    </button>
+    </a>
     <button mat-menu-item>
       <mat-icon>tune</mat-icon>
       <span>Preferences</span>
