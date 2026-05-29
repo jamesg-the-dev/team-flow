@@ -15,7 +15,7 @@
     <mat-chip-listbox
       class="projects__filters"
       [value]="status()"
-      (change)="status.set($event.value)"
+      (change)="onStatusFilterChange($event.value)"
       aria-label="Filter projects by status"
     >
       @for (filter of statusFilters; track filter.value) {
@@ -25,10 +25,10 @@
       }
     </mat-chip-listbox>
 
-    <button mat-stroked-button>
+    <!-- <button mat-stroked-button>
       <mat-icon>filter_list</mat-icon>
       Filter
-    </button>
+    </button> -->
 
     <mat-button-toggle-group
       [value]="view()"

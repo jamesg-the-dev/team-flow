@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -25,6 +25,7 @@ import {
   projectDtoToListItem,
   summaryToProjectListItem,
   toApiPriority,
+  toApiStatus,
 } from '@shared/utils/project-mappers';
 import {
   NewProjectDialogComponent,
@@ -62,37 +63,36 @@ type StatusFilter = 'all' | Project['status'];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectListComponent {
-  private readonly dialog = inject(MatDialog);
-  private readonly api = inject(ProjectsApiService);
-  private readonly snackbar = inject(MatSnackBar);
+  dialog = inject(MatDialog);
+  api = inject(ProjectsApiService);
+  snackbar = inject(MatSnackBar);
+  route = inject(ActivatedRoute);
+  router = inject(Router);
 
-  readonly view = signal<ViewMode>('grid');
-  readonly status = signal<StatusFilter>('all');
+  view = signal<ViewMode>('grid');
+  status = signal<StatusFilter>('all');
 
-  readonly searchControl = new FormControl('', { nonNullable: true });
-  private readonly search = toSignal(this.searchControl.valueChanges, {
+  searchControl = new FormControl('', { nonNullable: true });
+  search = toSignal(this.searchControl.valueChanges, {
     initialValue: this.searchControl.value,
   });
 
-  private readonly projects = signal<readonly Project[]>([]);
-  readonly loading = signal(false);
-  readonly error = signal<string | null>(null);
+  projects = signal<readonly Project[]>([]);
+  loading = signal(false);
+  error = signal<string | null>(null);
 
-  readonly filteredProjects = computed<readonly Project[]>(() => {
+  filteredProjects = computed<readonly Project[]>(() => {
     const query = this.search().trim().toLowerCase();
-    const status = this.status();
-
     return this.projects().filter(project => {
-      const matchesStatus = status === 'all' || project.status === status;
       const matchesQuery =
         !query ||
         project.name.toLowerCase().includes(query) ||
         project.description.toLowerCase().includes(query);
-      return matchesStatus && matchesQuery;
+      return matchesQuery;
     });
   });
 
-  readonly statusFilters: readonly { value: StatusFilter; label: string }[] = [
+  statusFilters: { value: StatusFilter; label: string }[] = [
     { value: 'all', label: 'All' },
     { value: 'active', label: 'Active' },
     { value: 'planning', label: 'Planning' },
@@ -102,14 +102,45 @@ export class ProjectListComponent {
   ];
 
   constructor() {
-    this.refresh();
+    this.route.queryParamMap.subscribe(params => {
+      const statusParam = params.get('status') as StatusFilter | null;
+      const validStatus = this.statusFilters.some(f => f.value === statusParam);
+      const status = statusParam && validStatus ? statusParam : 'all';
+      if (this.status() !== status) {
+        this.status.set(status);
+      }
+      this.refresh();
+    });
+  }
+
+  async onStatusFilterChange(status: StatusFilter) {
+    this.status.set(status);
+    const queryParams = { ...this.route.snapshot.queryParams };
+
+    if (status === 'all') {
+      queryParams['status'] = null;
+    } else {
+      queryParams['status'] = status;
+    }
+
+    await this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   refresh(): void {
     this.loading.set(true);
     this.error.set(null);
+    const status = this.status();
+    const query: any = { pageSize: 100 };
+    if (status && status !== 'all') {
+      query.status = toApiStatus(status);
+    }
     this.api
-      .list({ pageSize: 100 })
+      .list(query)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: page =>
