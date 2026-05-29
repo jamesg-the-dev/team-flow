@@ -29,14 +29,15 @@ const AUSTRALIAN_TIMEZONES: readonly { value: string; label: string }[] = [
   { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' },
   { value: 'Australia/Melbourne', label: 'Melbourne (AEST/AEDT)' },
   { value: 'Australia/Brisbane', label: 'Brisbane (AEST)' },
-  { value: 'Australia/Adelaide', label: 'Adelaide (ACST/ACDT)' },
-  { value: 'Australia/Perth', label: 'Perth (AWST)' },
   { value: 'Australia/Hobart', label: 'Hobart (AEST/AEDT)' },
+  { value: 'Australia/Adelaide', label: 'Adelaide (ACST/ACDT)' },
   { value: 'Australia/Darwin', label: 'Darwin (ACST)' },
-  { value: 'Australia/Canberra', label: 'Canberra (AEST/AEDT)' },
-  { value: 'Australia/Broken_Hill', label: 'Broken Hill (ACST/ACDT)' },
-  { value: 'Australia/Lord_Howe', label: 'Lord Howe Island (LHST/LHDT)' },
+  { value: 'Australia/Perth', label: 'Perth (AWST)' },
   { value: 'Australia/Eucla', label: 'Eucla (ACWST)' },
+  { value: 'Australia/Lord_Howe', label: 'Lord Howe Island (LHST/LHDT)' },
+  { value: 'Pacific/Norfolk', label: 'Norfolk Island (NFT)' },
+  { value: 'Indian/Christmas', label: 'Christmas Island (CXT)' },
+  { value: 'Indian/Cocos', label: 'Cocos Islands (CCT)' },
 ];
 
 import { MeApiService, UserProfile } from '@core/services/me-api.service';
