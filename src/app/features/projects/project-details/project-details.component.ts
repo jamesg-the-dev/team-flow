@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
 import { ChartConfiguration, ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { forkJoin, of } from 'rxjs';
@@ -26,6 +27,11 @@ import { ThemeService } from '@core/services/theme.service';
 import { withAlpha } from '@shared/utils/color';
 import { ProjectDetails } from '@shared/models';
 import { toApiPriority, toApiStatus, toProjectDetails } from '@shared/utils/project-mappers';
+import {
+  AddMemberDialogComponent,
+  AddMemberDialogData,
+  AddMemberResult,
+} from '../add-member-dialog/add-member-dialog.component';
 
 type TabKey = 'overview' | 'tasks' | 'team' | 'activity' | 'settings';
 
@@ -63,6 +69,7 @@ export class ProjectDetailsComponent {
   private readonly theme = inject(ThemeService);
   private readonly api = inject(ProjectsApiService);
   private readonly snackbar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
 
   private readonly routeId = toSignal(
     this.route.paramMap.pipe(map(params => params.get('id') ?? '')),
@@ -198,6 +205,36 @@ export class ProjectDetailsComponent {
           console.error('Failed to update project', err);
           this.snackbar.open('Could not update project.', 'Dismiss', { duration: 4000 });
         },
+      });
+  }
+
+  openAddMemberDialog(): void {
+    const id = this.routeId();
+    if (!id) return;
+    this.dialog
+      .open<AddMemberDialogComponent, AddMemberDialogData, AddMemberResult | undefined>(
+        AddMemberDialogComponent,
+        {
+          data: { projectName: this.project()?.name },
+          autoFocus: 'first-tabbable',
+          restoreFocus: true,
+        },
+      )
+      .afterClosed()
+      .subscribe(result => {
+        if (!result) return;
+        this.api.addMember(id, { userId: result.userId, role: result.role }).subscribe({
+          next: () => {
+            this.snackbar.open('Member added.', 'Dismiss', { duration: 3000 });
+            this.load(id);
+          },
+          error: err => {
+            console.error('Failed to add member', err);
+            this.snackbar.open(err?.error?.detail ?? 'Could not add member.', 'Dismiss', {
+              duration: 4000,
+            });
+          },
+        });
       });
   }
 

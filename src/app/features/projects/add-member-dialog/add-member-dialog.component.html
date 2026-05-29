@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>Add team member</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <mat-dialog-content class="dialog__content">
+    <p class="dialog__subtitle">
+      @if (data?.projectName) {
+        Invite a teammate to <strong>{{ data?.projectName }}</strong
+        >.
+      } @else {
+        Invite a teammate to this project.
+      }
+    </p>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>User ID</mat-label>
+      <mat-icon matPrefix>person_search</mat-icon>
+      <input
+        matInput
+        formControlName="userId"
+        placeholder="00000000-0000-0000-0000-000000000000"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <mat-hint>Paste the user's unique identifier.</mat-hint>
+      @if (form.controls.userId.touched && form.controls.userId.hasError('required')) {
+        <mat-error>User ID is required.</mat-error>
+      }
+      @if (form.controls.userId.touched && form.controls.userId.hasError('pattern')) {
+        <mat-error>Enter a valid UUID.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        @for (role of roles; track role.value) {
+          <mat-option [value]="role.value">
+            <div class="role-option">
+              <span class="role-option__label">{{ role.label }}</span>
+              <span class="role-option__description">{{ role.description }}</span>
+            </div>
+          </mat-option>
+        }
+      </mat-select>
+      <mat-hint>Choose what this member can do on the project.</mat-hint>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" type="submit">
+      <mat-icon>person_add</mat-icon>
+      Add member
+    </button>
+  </mat-dialog-actions>
+</form>
