@@ -64,15 +64,6 @@ export const toApiPriority = (p: Priority): PriorityLevel => PRIORITY_TO_API[p];
 
 const FALLBACK_DATE = '—';
 
-export function initialsFromName(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(part => part[0]?.toUpperCase() ?? '')
-    .join('');
-}
-
 export function shortenGuid(id: string): string {
   return id.slice(0, 8);
 }

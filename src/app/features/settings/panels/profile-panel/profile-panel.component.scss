@@ -1,5 +1,11 @@
 @use '../panel-shared' as *;
 
+.panel__loading {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
 .photo-row {
   display: flex;
   align-items: center;
@@ -9,4 +15,10 @@
     display: inline-flex;
     gap: 0.5rem;
   }
+}
+
+.avatar--image {
+  padding: 0;
+  overflow: hidden;
+  object-fit: cover;
 }

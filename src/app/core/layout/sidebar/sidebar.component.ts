@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthService } from '@core/services/auth.service';
+import { MeApiService, UserProfile } from '@core/services/me-api.service';
+import { getInitials } from '@shared/utils/initials';
 
 interface NavItem {
   readonly label: string;
@@ -33,25 +35,29 @@ interface NavItem {
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly meApi = inject(MeApiService);
 
   readonly user = this.auth.user;
-  readonly userInitials = computed(() => {
-    const u = this.auth.user();
-    const metadata = (u?.user_metadata ?? {}) as { name?: string };
-    const source = metadata.name?.trim() || u?.email || '';
-    if (!source) {
-      return '?';
-    }
-    const parts = source.split(/[\s@._-]+/).filter(Boolean);
-    const initials = parts
-      .slice(0, 2)
-      .map(p => p.charAt(0).toUpperCase())
-      .join('');
-    return initials || source.charAt(0).toUpperCase();
+  protected readonly profile = signal<UserProfile | null>(null);
+
+  readonly avatarPath = computed(() => this.profile()?.avatarPath ?? null);
+
+  readonly displayName = computed(() => {
+    const p = this.profile();
+    return p?.displayName?.trim() || p?.fullName?.trim() || this.auth.user()?.email || '';
   });
+
+  readonly userInitials = computed(() => getInitials(this.displayName()));
+
+  ngOnInit(): void {
+    this.meApi.getProfile().subscribe({
+      next: profile => this.profile.set(profile),
+      error: () => this.profile.set(null),
+    });
+  }
 
   readonly navItems: readonly NavItem[] = [
     { label: 'Dashboard', href: '/dashboard', icon: 'dashboard' },
