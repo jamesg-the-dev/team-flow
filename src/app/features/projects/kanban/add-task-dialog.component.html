@@ -27,6 +27,12 @@
       <mat-label>Due Date</mat-label>
       <input matInput type="date" formControlName="dueDate" />
     </mat-form-field>
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Board Status</mat-label>
+      <mat-select formControlName="column">
+        <mat-option *ngFor="let c of columns" [value]="c">{{ c }}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </form>
 </div>
 <div mat-dialog-actions align="end">

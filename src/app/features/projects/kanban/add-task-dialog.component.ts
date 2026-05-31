@@ -1,7 +1,7 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { PriorityLevel } from '../../../shared/models/project-api';
+import { PriorityLevel, TaskColumn } from '../../../shared/models/project-api';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -29,19 +29,21 @@ const priorityLevels: (keyof typeof PriorityLevel)[] = ['Low', 'Medium', 'High',
 export class AddTaskDialogComponent {
   form: FormGroup;
   priorities = priorityLevels;
+  columns = Object.keys(TaskColumn).filter(k => isNaN(Number(k)));
 
-  constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<AddTaskDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { projectId: string },
-  ) {
+  fb = inject(FormBuilder);
+  dialogRef = inject(MatDialogRef<AddTaskDialogComponent>);
+  data = inject(MAT_DIALOG_DATA) as { projectId: string };
+
+  constructor() {
     this.form = this.fb.group({
-      title: ['', Validators.required],
-      description: [''],
+      title: [null, Validators.required],
+      description: [null],
       priority: [PriorityLevel.Medium, Validators.required],
-      assigneeId: [''],
-      estimateHours: [''],
-      dueDate: [''],
+      assigneeId: [null],
+      estimateHours: [null],
+      dueDate: [null],
+      column: [TaskColumn.Backlog, Validators.required],
     });
   }
 

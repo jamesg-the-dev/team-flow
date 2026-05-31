@@ -3,19 +3,18 @@
 // ---------------------------------------------------------------------------
 
 export enum TaskColumn {
-  Backlog = "Backlog",
-  Todo = "Todo",
-  InProgress = "InProgress",
-  Review = "Review",
-  Done = "Done",
+  Backlog = 'Backlog',
+  Todo = 'Todo',
+  InProgress = 'InProgress',
+  Review = 'Review',
+  Done = 'Done',
 }
 
-
 export enum PriorityLevel {
-  Low = "Low",
-  Medium = "Medium",
-  High = "High",
-  Critical = "Critical",
+  Low = 'Low',
+  Medium = 'Medium',
+  High = 'High',
+  Critical = 'Critical',
 }
 
 export interface TaskDto {
@@ -72,6 +71,7 @@ export interface CreateTaskRequest {
   assigneeId?: string;
   estimateHours?: number;
   dueDate?: string; // ISO date
+  column: TaskColumn;
 }
 
 export interface MoveTaskRequest {
@@ -112,13 +112,7 @@ export type DateOnly = string;
 /** ISO 8601 datetime with offset. */
 export type DateTimeOffset = string;
 
-export type ProjectStatus =
-  | 'Planning'
-  | 'Active'
-  | 'OnHold'
-  | 'Archived'
-  | 'Completed';
-
+export type ProjectStatus = 'Planning' | 'Active' | 'OnHold' | 'Archived' | 'Completed';
 
 export type ProjectMemberRole = 'Lead' | 'Contributor' | 'Viewer';
 
