@@ -1,3 +1,101 @@
+// ---------------------------------------------------------------------------
+// Kanban/Task API DTOs (from user-provided contract)
+// ---------------------------------------------------------------------------
+
+export enum TaskColumn {
+  Backlog = "Backlog",
+  Todo = "Todo",
+  InProgress = "InProgress",
+  Review = "Review",
+  Done = "Done",
+}
+
+
+export enum PriorityLevel {
+  Low = "Low",
+  Medium = "Medium",
+  High = "High",
+  Critical = "Critical",
+}
+
+export interface TaskDto {
+  id: string;
+  projectId: string;
+  number: number;
+  title: string;
+  description?: string;
+  column: TaskColumn;
+  priority: PriorityLevel;
+  position: number;
+  assigneeId?: string;
+  reporterId: string;
+  estimateHours?: number;
+  dueDate?: string; // ISO date
+  completedAt?: string; // ISO datetime
+  createdAt: string; // ISO datetime
+  updatedAt: string; // ISO datetime
+}
+
+export interface TaskBoardCardDto {
+  id: string;
+  number: number;
+  title: string;
+  column: TaskColumn;
+  priority: PriorityLevel;
+  position: number;
+  assigneeId?: string;
+  dueDate?: string; // ISO date
+}
+
+export interface TaskCommentDto {
+  id: string;
+  taskId: string;
+  authorId: string;
+  parentId?: string;
+  body: string;
+  createdAt: string; // ISO datetime
+  editedAt?: string; // ISO datetime
+}
+
+export interface PagedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+// REQUESTS
+export interface CreateTaskRequest {
+  title: string;
+  description?: string;
+  priority: PriorityLevel;
+  assigneeId?: string;
+  estimateHours?: number;
+  dueDate?: string; // ISO date
+}
+
+export interface MoveTaskRequest {
+  targetColumn: TaskColumn;
+  beforeTaskId?: string;
+  afterTaskId?: string;
+}
+
+export interface AssignRequest {
+  assigneeId?: string;
+}
+
+export interface AddCommentRequest {
+  body: string;
+  parentId?: string;
+}
+
+// ENDPOINT RESPONSES
+export type GetProjectBoardResponse = Record<TaskColumn, TaskBoardCardDto[]>;
+export type ListProjectTasksResponse = PagedResult<TaskDto>;
+export type GetTaskByNumberResponse = TaskDto;
+export type CreateTaskResponse = TaskDto;
+export type GetTaskByIdResponse = TaskDto;
+export type AddTaskCommentResponse = TaskCommentDto;
 /**
  * DTOs and request/response shapes for the TeamFlow Projects API.
  *
@@ -21,7 +119,6 @@ export type ProjectStatus =
   | 'Archived'
   | 'Completed';
 
-export type PriorityLevel = 'Low' | 'Medium' | 'High' | 'Critical';
 
 export type ProjectMemberRole = 'Lead' | 'Contributor' | 'Viewer';
 

@@ -1,11 +1,10 @@
 import {
-  Priority,
-  Project,
   ProjectActivityEntry,
   ProjectDetails,
   ProjectProgressPoint,
   ProjectTeamMember,
 } from '@shared/models';
+import type { Project } from '../models/index';
 import {
   PriorityLevel,
   ProjectActivityDto,
@@ -39,24 +38,24 @@ const STATUS_TO_API: Record<UiStatus, ProjectStatus> = {
   completed: 'Completed',
 };
 
-const PRIORITY_TO_UI: Record<PriorityLevel, Priority> = {
-  Low: 'low',
-  Medium: 'medium',
-  High: 'high',
-  Critical: 'critical',
-};
-
-const PRIORITY_TO_API: Record<Priority, PriorityLevel> = {
-  low: 'Low',
-  medium: 'Medium',
-  high: 'High',
-  critical: 'Critical',
-};
-
 export const toUiStatus = (s: ProjectStatus): UiStatus => STATUS_TO_UI[s];
 export const toApiStatus = (s: UiStatus): ProjectStatus => STATUS_TO_API[s];
-export const toUiPriority = (p: PriorityLevel): Priority => PRIORITY_TO_UI[p];
-export const toApiPriority = (p: Priority): PriorityLevel => PRIORITY_TO_API[p];
+// For UI display, just use PriorityLevel directly or map to a label if needed
+export const toUiPriority = (p: PriorityLevel): string => p.toLowerCase();
+export const toApiPriority = (p: string): PriorityLevel => {
+  switch (p.toLowerCase()) {
+    case 'low':
+      return PriorityLevel.Low;
+    case 'medium':
+      return PriorityLevel.Medium;
+    case 'high':
+      return PriorityLevel.High;
+    case 'critical':
+      return PriorityLevel.Critical;
+    default:
+      throw new Error('Invalid priority: ' + p);
+  }
+};
 
 // ---------------------------------------------------------------------------
 // Formatting helpers
@@ -109,7 +108,7 @@ export function formatBudget(cents: number | null, currency: string | null): str
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `${(currency ?? 'USD')} ${amount.toFixed(0)}`;
+    return `${currency ?? 'USD'} ${amount.toFixed(0)}`;
   }
 }
 
@@ -133,7 +132,8 @@ export function summaryToProjectListItem(dto: ProjectSummaryDto): Project {
     team: new Array(Math.min(dto.memberCount, 5)).fill('•'),
     tasks: { total: 0, completed: 0 },
     dueDate: formatDate(dto.dueDate),
-    priority: toUiPriority(dto.priority),
+    priority: dto.priority,
+    column: undefined as any, // or set a default TaskColumn if needed
   };
 }
 
@@ -148,7 +148,8 @@ export function projectDtoToListItem(dto: ProjectDto, memberCount = 0): Project 
     team: new Array(Math.min(memberCount, 5)).fill('•'),
     tasks: { total: 0, completed: 0 },
     dueDate: formatDate(dto.dueDate),
-    priority: toUiPriority(dto.priority),
+    priority: dto.priority,
+    column: undefined as any, // or set a default TaskColumn if needed
   };
 }
 

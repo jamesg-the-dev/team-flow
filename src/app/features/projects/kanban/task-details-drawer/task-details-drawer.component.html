@@ -49,9 +49,9 @@
             >
               <mat-icon
                 class="drawer__flag"
-                [class.drawer__flag--high]="task.priority === 'high'"
-                [class.drawer__flag--medium]="task.priority === 'medium'"
-                [class.drawer__flag--low]="task.priority === 'low'"
+                [class.drawer__flag--high]="task.priority === 'High'"
+                [class.drawer__flag--medium]="task.priority === 'Medium'"
+                [class.drawer__flag--low]="task.priority === 'Low'"
                 >flag</mat-icon
               >
               <span>{{ task.priority | titlecase }}</span>

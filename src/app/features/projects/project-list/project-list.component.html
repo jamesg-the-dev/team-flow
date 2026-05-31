@@ -121,7 +121,7 @@
           <div class="project-card__stats">
             <span class="project-card__stat">
               <mat-icon>track_changes</mat-icon>
-              {{ project.tasks.completed }}/{{ project.tasks.total }}
+              {{ project.tasks?.completed ?? 0 }}/{{ project.tasks?.total ?? 0 }}
             </span>
             <span class="project-card__stat">
               <mat-icon>event</mat-icon>
@@ -198,11 +198,7 @@
               <mat-icon>archive</mat-icon>
               <span>Archive</span>
             </button>
-            <button
-              mat-menu-item
-              class="menu-item--destructive"
-              (click)="remove(project, $event)"
-            >
+            <button mat-menu-item class="menu-item--destructive" (click)="remove(project, $event)">
               <mat-icon>delete</mat-icon>
               <span>Delete</span>
             </button>

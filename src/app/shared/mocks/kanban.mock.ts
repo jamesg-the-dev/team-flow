@@ -1,4 +1,6 @@
-import { Task, TaskColumn } from '@shared/models';
+import { TaskColumn } from '@shared/models/project-api';
+import { Task } from '@shared/models/index';
+import { PriorityLevel } from '@shared/models/project-api';
 
 export interface KanbanColumn {
   readonly id: TaskColumn;
@@ -8,11 +10,11 @@ export interface KanbanColumn {
 }
 
 export const KANBAN_COLUMNS: readonly KanbanColumn[] = [
-  { id: 'backlog', title: 'Backlog', accent: 'var(--sys-outline)' },
-  { id: 'todo', title: 'To Do', accent: '#3b82f6' },
-  { id: 'in-progress', title: 'In Progress', accent: '#f59e0b' },
-  { id: 'review', title: 'Review', accent: 'var(--sys-tertiary)' },
-  { id: 'done', title: 'Done', accent: '#10b981' },
+  { id: TaskColumn.Backlog, title: 'Backlog', accent: 'var(--sys-outline)' },
+  { id: TaskColumn.Todo, title: 'To Do', accent: '#3b82f6' },
+  { id: TaskColumn.InProgress, title: 'In Progress', accent: '#f59e0b' },
+  { id: TaskColumn.Review, title: 'Review', accent: 'var(--sys-tertiary)' },
+  { id: TaskColumn.Done, title: 'Done', accent: '#10b981' },
 ];
 
 export const INITIAL_TASKS: readonly Task[] = [
@@ -21,84 +23,84 @@ export const INITIAL_TASKS: readonly Task[] = [
     title: 'Design new landing page',
     description: 'Create mockups for the new marketing site',
     assignee: 'SC',
-    priority: 'high',
+    priority: PriorityLevel.High,
     labels: ['Design', 'Marketing'],
     comments: 5,
     attachments: 3,
     dueDate: 'May 28',
-    column: 'todo',
+    column: TaskColumn.Todo,
   },
   {
     id: '2',
     title: 'Implement user authentication',
     assignee: 'MJ',
-    priority: 'high',
+    priority: PriorityLevel.High,
     labels: ['Backend', 'Security'],
     comments: 12,
     attachments: 0,
     dueDate: 'May 27',
-    column: 'in-progress',
+    column: TaskColumn.InProgress,
   },
   {
     id: '3',
     title: 'Write API documentation',
     assignee: 'AK',
-    priority: 'medium',
+    priority: PriorityLevel.Medium,
     labels: ['Documentation'],
     comments: 3,
     attachments: 1,
-    column: 'in-progress',
+    column: TaskColumn.InProgress,
   },
   {
     id: '4',
     title: 'Fix mobile responsive issues',
     assignee: 'ED',
-    priority: 'high',
+    priority: PriorityLevel.High,
     labels: ['Frontend', 'Bug'],
     comments: 8,
     attachments: 2,
     dueDate: 'May 26',
-    column: 'review',
+    column: TaskColumn.Review,
   },
   {
     id: '5',
     title: 'Database schema optimization',
     assignee: 'JL',
-    priority: 'low',
+    priority: PriorityLevel.Low,
     labels: ['Backend', 'Performance'],
     comments: 2,
     attachments: 0,
-    column: 'done',
+    column: TaskColumn.Done,
   },
   {
     id: '6',
     title: 'Update dependencies',
-    priority: 'low',
+    priority: PriorityLevel.Low,
     labels: ['Maintenance'],
     comments: 0,
     attachments: 0,
-    column: 'backlog',
+    column: TaskColumn.Backlog,
   },
   {
     id: '7',
     title: 'Conduct user interviews',
     assignee: 'SC',
-    priority: 'medium',
+    priority: PriorityLevel.Medium,
     labels: ['Research', 'UX'],
     comments: 4,
     attachments: 5,
     dueDate: 'Jun 1',
-    column: 'todo',
+    column: TaskColumn.Todo,
   },
   {
     id: '8',
     title: 'Set up CI/CD pipeline',
     assignee: 'AK',
-    priority: 'high',
+    priority: PriorityLevel.High,
     labels: ['DevOps'],
     comments: 6,
     attachments: 1,
-    column: 'in-progress',
+    column: TaskColumn.InProgress,
   },
 ];
 

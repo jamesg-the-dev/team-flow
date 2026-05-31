@@ -1,7 +1,16 @@
-import { CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  CdkDragPlaceholder,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,11 +19,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { INITIAL_TASKS, KANBAN_COLUMNS } from '@shared/mocks/kanban.mock';
-import { Task, TaskColumn } from '@shared/models';
+import { KANBAN_COLUMNS } from '@shared/mocks/kanban.mock';
+import {
+  TaskColumn,
+  TaskBoardCardDto,
+  GetProjectBoardResponse,
+  CreateTaskRequest,
+} from '@shared/models/project-api';
+import { Task } from '@shared/models';
+import { TasksApiService } from '@core/services/tasks-api.service';
 
 import { TaskCardComponent } from './task-card/task-card.component';
 import { TaskDetailsDrawerComponent } from './task-details-drawer/task-details-drawer.component';
+import { AddTaskDialogComponent } from './add-task-dialog.component';
 
 @Component({
   selector: 'app-kanban',
@@ -22,6 +39,7 @@ import { TaskDetailsDrawerComponent } from './task-details-drawer/task-details-d
   imports: [
     CdkDropList,
     CdkDrag,
+    CdkDragPlaceholder,
     ReactiveFormsModule,
     MatButtonModule,
     MatDividerModule,
@@ -39,34 +57,60 @@ import { TaskDetailsDrawerComponent } from './task-details-drawer/task-details-d
 })
 export class KanbanComponent {
   readonly columns = KANBAN_COLUMNS;
-  readonly columnDropListIds = this.columns.map(column => `drop-${column.id}`);
+  readonly columnDropListIds = this.columns.map((column: any) => `drop-${column.id}`);
 
   readonly searchControl = new FormControl('', { nonNullable: true });
   private readonly search = toSignal(this.searchControl.valueChanges, {
     initialValue: this.searchControl.value,
   });
 
-  private readonly tasks = signal<Task[]>([...INITIAL_TASKS]);
-  readonly selectedTask = signal<Task | null>(null);
+  private readonly api = inject(TasksApiService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly dialog = inject(MatDialog);
 
-  readonly tasksByColumn = computed(() => {
-    const query = this.search().toLowerCase().trim();
-    const all = this.tasks();
-    const filtered = query
-      ? all.filter(
-          task =>
-            task.title.toLowerCase().includes(query) ||
-            task.labels.some(l => l.toLowerCase().includes(query)),
-        )
-      : all;
-    const grouped = new Map<TaskColumn, Task[]>();
-    for (const column of this.columns) grouped.set(column.id, []);
-    for (const task of filtered) grouped.get(task.column)?.push(task);
-    return grouped;
-  });
+  readonly selectedTask = signal<Task | null>(null);
+  readonly board = signal<GetProjectBoardResponse | null>(null);
+  readonly loading = signal(false);
+  readonly projectId = toSignal(
+    this.route.paramMap.pipe(map((params: any) => params.get('id') ?? '')),
+    { initialValue: this.route.snapshot.paramMap.get('id') ?? '' },
+  );
+
+  constructor() {
+    this.loadBoard();
+  }
+
+  loadBoard() {
+    const projectId = this.projectId();
+    if (!projectId) return;
+    this.loading.set(true);
+    this.api.getProjectBoard(projectId).subscribe({
+      next: board => {
+        this.board.set(board);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  // Map TaskBoardCardDto to Task for UI compatibility
+  private mapToTask(dto: TaskBoardCardDto): Task {
+    return {
+      id: dto.id,
+      title: dto.title,
+      description: '',
+      assignee: dto.assigneeId ?? '',
+      priority: (dto.priority?.toLowerCase?.() ?? 'medium') as any,
+      labels: [],
+      comments: 0,
+      attachments: 0,
+      dueDate: dto.dueDate,
+      column: dto.column,
+    };
+  }
 
   tasksFor(column: TaskColumn): Task[] {
-    return this.tasksByColumn().get(column) ?? [];
+    return (this.board()?.[column] ?? []).map(dto => this.mapToTask(dto));
   }
 
   dropListIdFor(column: TaskColumn): string {
@@ -77,18 +121,11 @@ export class KanbanComponent {
     if (event.previousContainer === event.container) {
       return;
     }
-
     const moved = event.item.data as Task;
-    this.tasks.update(current =>
-      current.map(task => (task.id === moved.id ? { ...task, column: targetColumn } : task)),
-    );
-
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex,
-    );
+    this.api.moveTask(moved.id, { targetColumn }).subscribe({
+      next: () => this.loadBoard(),
+    });
+    // Optionally: Optimistically update UI here
   }
 
   openTask(task: Task): void {
@@ -97,5 +134,18 @@ export class KanbanComponent {
 
   closeTask(): void {
     this.selectedTask.set(null);
+  }
+
+  openAddTaskDialog(): void {
+    const dialogRef = this.dialog.open(AddTaskDialogComponent, {
+      data: { projectId: this.projectId() },
+    });
+    dialogRef.afterClosed().subscribe((result: CreateTaskRequest | undefined) => {
+      if (result) {
+        this.api.createTask(this.projectId(), result).subscribe({
+          next: () => this.loadBoard(),
+        });
+      }
+    });
   }
 }

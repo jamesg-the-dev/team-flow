@@ -1,23 +1,16 @@
-/**
- * Shared domain models for the TeamFlow showcase.
- * Replace these with API-generated types once the backend is wired in.
- */
-
-export type Priority = 'low' | 'medium' | 'high' | 'critical';
-
-export type TaskColumn = 'backlog' | 'todo' | 'in-progress' | 'review' | 'done';
+import { TaskColumn, PriorityLevel } from './project-api';
 
 export interface Task {
   id: string;
   title: string;
   description?: string;
   assignee?: string;
-  priority: Priority;
-  labels: string[];
+  priority: PriorityLevel;
   comments: number;
   attachments: number;
   dueDate?: string;
   column: TaskColumn;
+  labels?: string[];
 }
 
 export interface Project {
@@ -27,9 +20,10 @@ export interface Project {
   status: 'active' | 'planning' | 'on-hold' | 'completed' | 'archived';
   progress: number;
   team: string[];
-  tasks: { total: number; completed: number };
   dueDate: string;
-  priority: Priority;
+  priority: PriorityLevel;
+  column: TaskColumn;
+  tasks?: { total: number; completed: number };
 }
 
 export interface ProjectTeamMember {
@@ -60,7 +54,7 @@ export interface ProjectDetails {
   description: string;
   status: 'active' | 'planning' | 'on-hold' | 'completed' | 'archived';
   progress: number;
-  priority: Priority;
+  priority: string;
   startDate: string;
   dueDate: string;
   budget: string;

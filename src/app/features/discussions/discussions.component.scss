@@ -1,7 +1,7 @@
 :host {
   display: block;
   height: 100%;
-}
+/* removed unmatched closing brace */
 
 .discussions {
   display: flex;
@@ -234,10 +234,6 @@
     }
   }
 }
-
-  .reaction {
-    // replaced by .pill utility
-  }
 
 .replies {
   margin-top: 0.75rem;

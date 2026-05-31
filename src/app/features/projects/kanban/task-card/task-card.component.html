@@ -31,7 +31,7 @@
     <p class="task-card__description">{{ task.description }}</p>
   }
 
-  @if (task.labels.length) {
+  @if (task.labels?.length) {
     <div class="task-card__labels">
       @for (label of task.labels; track label) {
         <span class="pill pill--xs pill--soft">{{ label }}</span>
@@ -63,9 +63,9 @@
     <div class="task-card__right">
       <mat-icon
         class="task-card__flag"
-        [class.task-card__flag--high]="task.priority === 'high'"
-        [class.task-card__flag--medium]="task.priority === 'medium'"
-        [class.task-card__flag--low]="task.priority === 'low'"
+        [class.task-card__flag--high]="task.priority === 'High'"
+        [class.task-card__flag--medium]="task.priority === 'Medium'"
+        [class.task-card__flag--low]="task.priority === 'Low'"
         [matTooltip]="task.priority + ' priority'"
         >flag</mat-icon
       >

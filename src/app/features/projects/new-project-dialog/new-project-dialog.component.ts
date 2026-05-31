@@ -7,14 +7,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { Priority } from '@shared/models';
+import { PriorityLevel } from '@shared/models/project-api';
 
 export interface NewProjectResult {
   readonly key: string;
   readonly name: string;
   readonly description: string;
   readonly dueDate: string;
-  readonly priority: Priority;
+  readonly priority: PriorityLevel;
 }
 
 @Component({
@@ -49,10 +49,15 @@ export class NewProjectDialogComponent {
     name: ['', [Validators.required, Validators.minLength(2)]],
     description: [''],
     dueDate: [''],
-    priority: ['medium' as Priority, Validators.required],
+    priority: [PriorityLevel.Medium, Validators.required],
   });
 
-  readonly priorities: readonly Priority[] = ['low', 'medium', 'high', 'critical'];
+  readonly priorities: readonly PriorityLevel[] = [
+    PriorityLevel.Low,
+    PriorityLevel.Medium,
+    PriorityLevel.High,
+    PriorityLevel.Critical,
+  ];
 
   submit(): void {
     if (this.form.invalid) {
