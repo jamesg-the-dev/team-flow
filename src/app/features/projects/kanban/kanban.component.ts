@@ -1,11 +1,5 @@
-import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDropList,
-  CdkDragPlaceholder,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { CdkDrag, CdkDragDrop, CdkDropList, CdkDragPlaceholder } from '@angular/cdk/drag-drop';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
@@ -122,10 +116,26 @@ export class KanbanComponent {
       return;
     }
     const moved = event.item.data as Task;
+    const currentBoard = this.board();
+    if (currentBoard) {
+      const prevColumn = moved.column;
+      const updatedBoard: GetProjectBoardResponse = { ...currentBoard };
+      updatedBoard[prevColumn] = (updatedBoard[prevColumn] || []).filter(
+        (dto: TaskBoardCardDto) => dto.id !== moved.id,
+      );
+      const movedDto = (currentBoard[prevColumn] || []).find(
+        (dto: TaskBoardCardDto) => dto.id === moved.id,
+      );
+      if (movedDto) {
+        const updatedMovedDto = { ...movedDto, column: targetColumn };
+        updatedBoard[targetColumn] = [updatedMovedDto, ...(updatedBoard[targetColumn] || [])];
+        this.board.set(updatedBoard);
+      }
+    }
     this.api.moveTask(moved.id, { targetColumn }).subscribe({
       next: () => this.loadBoard(),
+      error: () => this.loadBoard(),
     });
-    // Optionally: Optimistically update UI here
   }
 
   openTask(task: Task): void {
