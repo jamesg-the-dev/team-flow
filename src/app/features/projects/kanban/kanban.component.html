@@ -43,7 +43,12 @@
             <h3 class="column__title">{{ column.title }}</h3>
             <span class="column__count">{{ tasksFor(column.id).length }}</span>
           </div>
-          <button mat-icon-button aria-label="Add task" matTooltip="Add task">
+          <button
+            mat-icon-button
+            aria-label="Add task"
+            matTooltip="Add task"
+            (click)="openAddTaskDialogForColumn(column.id)"
+          >
             <mat-icon>add</mat-icon>
           </button>
         </header>

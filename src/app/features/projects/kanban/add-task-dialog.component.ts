@@ -33,7 +33,7 @@ export class AddTaskDialogComponent {
 
   fb = inject(FormBuilder);
   dialogRef = inject(MatDialogRef<AddTaskDialogComponent>);
-  data = inject(MAT_DIALOG_DATA) as { projectId: string };
+  data = inject(MAT_DIALOG_DATA) as { projectId: string; column?: TaskColumn };
 
   constructor() {
     this.form = this.fb.group({
@@ -43,7 +43,7 @@ export class AddTaskDialogComponent {
       assigneeId: [null],
       estimateHours: [null],
       dueDate: [null],
-      column: [TaskColumn.Backlog, Validators.required],
+      column: [this.data.column ?? TaskColumn.Backlog, Validators.required],
     });
   }
 

@@ -137,8 +137,12 @@ export class KanbanComponent {
   }
 
   openAddTaskDialog(): void {
+    this.openAddTaskDialogForColumn();
+  }
+
+  openAddTaskDialogForColumn(column?: TaskColumn): void {
     const dialogRef = this.dialog.open(AddTaskDialogComponent, {
-      data: { projectId: this.projectId() },
+      data: { projectId: this.projectId(), column },
     });
     dialogRef.afterClosed().subscribe((result: CreateTaskRequest | undefined) => {
       if (result) {
