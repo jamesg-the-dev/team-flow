@@ -63,7 +63,11 @@
         >
           @for (task of tasksFor(column.id); track task.id) {
             <div cdkDrag [cdkDragData]="task" class="column__item">
-              <app-task-card [task]="task" (openTask)="openTask($event)" />
+              <app-task-card
+                [task]="task"
+                (openTask)="openTask($event)"
+                (deleteTask)="deleteTask($event)"
+              />
               <div class="column__placeholder" *cdkDragPlaceholder></div>
             </div>
           } @empty {

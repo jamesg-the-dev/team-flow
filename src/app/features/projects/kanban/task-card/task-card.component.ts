@@ -4,7 +4,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
 import { Task } from '@shared/models';
 
 @Component({
@@ -18,4 +17,5 @@ import { Task } from '@shared/models';
 export class TaskCardComponent {
   @Input({ required: true }) task!: Task;
   @Output() readonly openTask = new EventEmitter<Task>();
+  @Output() readonly deleteTask = new EventEmitter<Task>();
 }

@@ -142,6 +142,13 @@ export class KanbanComponent {
     this.selectedTask.set(task);
   }
 
+  deleteTask(task: Task): void {
+    this.api.deleteTask(task.id ?? '').subscribe({
+      next: () => this.loadBoard(),
+      error: () => this.loadBoard(),
+    });
+  }
+
   closeTask(): void {
     this.selectedTask.set(null);
   }
