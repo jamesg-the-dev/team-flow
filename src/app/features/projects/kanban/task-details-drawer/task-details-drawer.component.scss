@@ -96,20 +96,6 @@
     gap: 0.5rem;
   }
 
-  &__avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 50%;
-    background: var(--sys-tertiary-container);
-    color: var(--sys-on-tertiary-container);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-
   &__flag {
     font-size: 1rem;
     width: 1rem;
@@ -250,12 +236,6 @@
   display: flex;
   gap: 0.75rem;
 
-  &__avatar {
-    width: 2.25rem;
-    height: 2.25rem;
-    font-size: 0.75rem;
-  }
-
   &__body {
     flex: 1;
     min-width: 0;
@@ -298,31 +278,10 @@
   }
 }
 
-.reaction {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.125rem 0.5rem;
-  font-size: 0.75rem;
-  border-radius: 999px;
-  background: var(--sys-surface-container);
-  border: 1px solid var(--sys-outline-variant);
-  cursor: pointer;
-
-  &:hover {
-    background: var(--sys-surface-container-high);
-  }
-}
-
 .activity-item {
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
-
-  &__avatar {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
 
   &__text {
     margin: 0;

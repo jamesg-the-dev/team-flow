@@ -30,7 +30,7 @@
               [matMenuTriggerFor]="assigneeMenu"
             >
               @if (task.assignee) {
-                <span class="drawer__avatar">{{ task.assignee }}</span>
+                <span class="avatar avatar--sm">{{ task.assignee }}</span>
               }
               <span>{{ task.assignee ?? 'Unassigned' }}</span>
             </button>
@@ -120,7 +120,7 @@
           <ul class="drawer__comments">
             @for (comment of comments; track comment.id) {
               <li class="comment">
-                <span class="drawer__avatar comment__avatar">{{ comment.avatar }}</span>
+                <span class="avatar avatar--md">{{ comment.avatar }}</span>
                 <div class="comment__body">
                   <div class="comment__bubble">
                     <header class="comment__header">
@@ -152,7 +152,7 @@
           <ul class="drawer__activity">
             @for (item of activity; track item.id) {
               <li class="activity-item">
-                <span class="drawer__avatar activity-item__avatar">{{ item.avatar }}</span>
+                <span class="avatar avatar--sm">{{ item.avatar }}</span>
                 <div>
                   <p class="activity-item__text">
                     <strong>{{ item.author }}</strong>
@@ -168,7 +168,7 @@
     </div>
 
     <footer class="drawer__composer">
-      <span class="drawer__avatar">JD</span>
+      <span class="avatar avatar--sm">JD</span>
       <div class="drawer__composer-body">
         <mat-form-field appearance="outline" class="drawer__composer-field">
           <input matInput placeholder="Add a comment…" [formControl]="commentControl" />

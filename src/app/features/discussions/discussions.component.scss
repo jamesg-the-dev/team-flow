@@ -1,7 +1,7 @@
 :host {
   display: block;
   height: 100%;
-/* removed unmatched closing brace */
+}
 
 .discussions {
   display: flex;
@@ -101,9 +101,6 @@
     color: var(--sys-on-surface-variant);
   }
 
-  &__badge {
-    // replaced by .pill utility
-  }
 }
 
 // ---- Thread / messages ----
@@ -126,25 +123,10 @@
     flex-shrink: 0;
   }
 
-  &__heading {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
   &__title {
     margin: 0;
     font-size: 1rem;
     font-weight: 700;
-  }
-
-  &__members {
-    // replaced by .pill utility
-  }
-
-  &__header-actions {
-    display: inline-flex;
-    align-items: center;
   }
 
   &__messages {
@@ -185,10 +167,6 @@
     gap: 0.75rem;
   }
 
-
-    margin-bottom: 0.25rem;
-  }
-
   &__author {
     font-weight: 600;
 
@@ -212,27 +190,27 @@
     }
   }
 
-  &__reactions {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-  }
-
   &__reply,
   &__add-reaction {
     margin-top: 0.5rem;
-    background: transparent;
-    border: none;
     font-size: 0.75rem;
     color: var(--sys-on-surface-variant);
-    cursor: pointer;
-    padding: 0;
 
     &:hover {
       color: var(--sys-on-surface);
     }
   }
+}
+
+// Shared bare button reset for inline text actions.
+.message__reply,
+.message__add-reaction,
+.replies__cta,
+.composer__reply-cancel {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .replies {
@@ -246,40 +224,12 @@
 
   &__cta {
     align-self: flex-start;
-    background: transparent;
-    border: none;
-    padding: 0;
     color: var(--sys-primary);
     font-size: 0.75rem;
-    cursor: pointer;
 
     &:hover {
       text-decoration: underline;
     }
-  }
-}
-
-// ---- Avatar (reused locally; future shared component) ----
-.avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--sys-tertiary-container);
-  color: var(--sys-on-tertiary-container);
-  font-weight: 600;
-  flex-shrink: 0;
-
-  &--sm {
-    width: 1.75rem;
-    height: 1.75rem;
-    font-size: 0.625rem;
-  }
-
-  &--md {
-    width: 2.25rem;
-    height: 2.25rem;
-    font-size: 0.75rem;
   }
 }
 
@@ -344,11 +294,7 @@
   }
 
   &__reply-cancel {
-    background: transparent;
-    border: none;
-    padding: 0;
     color: var(--sys-primary);
-    cursor: pointer;
     font-size: 0.75rem;
 
     &:hover {
@@ -356,30 +302,7 @@
     }
   }
 
-  &__row {
-    display: flex;
-    gap: 0.75rem;
-  }
-
-  &__field {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
   &__input {
     width: 100%;
-  }
-
-  &__actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  &__tools {
-    display: inline-flex;
-    gap: 0.25rem;
   }
 }

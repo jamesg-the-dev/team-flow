@@ -28,7 +28,7 @@
                   <span>{{ channel.name }}</span>
                 </span>
                 @if (channel.unread) {
-                  <span class="channel__badge">{{ channel.unread }}</span>
+                  <span class="pill pill--xs">{{ channel.unread }}</span>
                 }
               </button>
             </li>
@@ -61,12 +61,12 @@
 
   <div class="thread">
     <header class="thread__header">
-      <div class="thread__heading">
+      <div class="thread__heading inline-flex items-center gap-2">
         <mat-icon>{{ selectedChannel().isPrivate ? 'lock' : 'tag' }}</mat-icon>
         <h2 class="thread__title">{{ selectedChannel().name }}</h2>
-        <span class="thread__members">12 members</span>
+        <span class="pill pill--xs">12 members</span>
       </div>
-      <div class="thread__header-actions">
+      <div class="thread__header-actions inline-flex items-center">
         <button mat-icon-button matTooltip="Pinned messages" aria-label="Pinned">
           <mat-icon>push_pin</mat-icon>
         </button>
@@ -97,17 +97,17 @@
             </div>
           }
 
-          <div class="message__row">
+          <div class="message__row flex gap-3">
             <span class="avatar avatar--md" [attr.aria-label]="msg.author">{{ msg.avatar }}</span>
             <div class="message__body">
-              <header class="message__header">
+              <header class="message__header flex items-center gap-2 mb-1">
                 <span class="message__author">{{ msg.author }}</span>
                 <span class="message__timestamp">{{ msg.timestamp }}</span>
               </header>
               <p class="message__content">{{ msg.content }}</p>
 
               @if (msg.reactions?.length) {
-                <div class="message__reactions">
+                <div class="message__reactions flex items-center gap-1 mt-2">
                   @for (reaction of msg.reactions; track reaction.emoji) {
                     <button type="button" class="pill pill--outlined" [matTooltip]="reaction.users.join(', ')">
                       <span>{{ reaction.emoji }}</span>
@@ -123,12 +123,12 @@
               @if (msg.replies?.length) {
                 <div class="replies">
                   @for (reply of msg.replies; track reply.id) {
-                    <div class="message__row replies__item">
+                    <div class="message__row replies__item flex gap-3">
                       <span class="avatar avatar--sm" [attr.aria-label]="reply.author">{{
                         reply.avatar
                       }}</span>
                       <div class="message__body">
-                        <header class="message__header">
+                        <header class="message__header flex items-center gap-2 mb-1">
                           <span class="message__author message__author--sm">{{
                             reply.author
                           }}</span>
@@ -173,9 +173,9 @@
         </div>
       }
 
-      <div class="composer__row">
+      <div class="composer__row flex gap-3">
         <span class="avatar avatar--md">JD</span>
-        <div class="composer__field">
+        <div class="composer__field flex-1 flex flex-col gap-2">
           <mat-form-field appearance="outline" class="composer__input" subscriptSizing="dynamic">
             <input
               matInput
@@ -184,8 +184,8 @@
               (keydown.enter)="$event.preventDefault(); sendMessage()"
             />
           </mat-form-field>
-          <div class="composer__actions">
-            <div class="composer__tools">
+          <div class="composer__actions flex items-center justify-between">
+            <div class="composer__tools inline-flex gap-1">
               <button mat-icon-button aria-label="Attach file">
                 <mat-icon>attach_file</mat-icon>
               </button>

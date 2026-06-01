@@ -1,13 +1,13 @@
 @if (project(); as p) {
   <div class="project-details flex flex-col min-h-full">
     <header class="project-details__header">
-      <div class="project-details__topbar">
+      <div class="project-details__topbar flex items-center justify-between gap-4">
         <button mat-button (click)="goBack()" class="project-details__back">
           <mat-icon>arrow_back</mat-icon>
           Back to Projects
         </button>
 
-        <div class="project-details__actions">
+        <div class="project-details__actions flex items-center gap-2">
           <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="More actions">
             <mat-icon>more_vert</mat-icon>
           </button>
@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <div class="project-details__title-block">
+      <div class="project-details__title-block flex flex-col gap-4">
         <h1 class="project-details__title">{{ p.name }}</h1>
 
         <div class="project-details__meta">
@@ -114,7 +114,7 @@
                 <mat-card-content class="overview__activity">
                   @for (activity of p.recentActivity; track trackActivity($index, activity)) {
                     <div class="activity-row">
-                      <div class="activity-row__avatar" aria-hidden="true">
+                      <div class="avatar avatar--md activity-row__avatar" aria-hidden="true">
                         {{ activity.avatar }}
                       </div>
                       <div class="activity-row__body">
@@ -136,30 +136,30 @@
                 <mat-card-header class="mb-2"
                   ><mat-card-title>Task Stats</mat-card-title></mat-card-header
                 >
-                <mat-card-content class="task-stats">
-                  <div class="task-stats__row">
-                    <span class="task-stats__label">
+                <mat-card-content class="task-stats flex flex-col gap-3">
+                  <div class="task-stats__row flex items-center justify-between text-sm">
+                    <span class="task-stats__label inline-flex items-center gap-2">
                       <span class="task-stats__dot task-stats__dot--done"></span>
                       Completed
                     </span>
                     <strong>{{ p.tasks.completed }}</strong>
                   </div>
-                  <div class="task-stats__row">
-                    <span class="task-stats__label">
+                  <div class="task-stats__row flex items-center justify-between text-sm">
+                    <span class="task-stats__label inline-flex items-center gap-2">
                       <span class="task-stats__dot task-stats__dot--progress"></span>
                       In Progress
                     </span>
                     <strong>{{ p.tasks.inProgress }}</strong>
                   </div>
-                  <div class="task-stats__row">
-                    <span class="task-stats__label">
+                  <div class="task-stats__row flex items-center justify-between text-sm">
+                    <span class="task-stats__label inline-flex items-center gap-2">
                       <span class="task-stats__dot task-stats__dot--todo"></span>
                       To Do
                     </span>
                     <strong>{{ p.tasks.todo }}</strong>
                   </div>
                   <mat-divider />
-                  <div class="task-stats__row">
+                  <div class="task-stats__row flex items-center justify-between text-sm">
                     <span>Total Tasks</span>
                     <strong class="task-stats__total">{{ p.tasks.total }}</strong>
                   </div>
@@ -170,16 +170,16 @@
                 <mat-card-header class="mb-2"
                   ><mat-card-title>Project Details</mat-card-title></mat-card-header
                 >
-                <mat-card-content class="detail-fields">
-                  <div class="detail-field">
+                <mat-card-content class="detail-fields flex flex-col gap-4">
+                  <div class="detail-field flex flex-col gap-1">
                     <label for="start-date">Start Date</label>
                     <p>{{ p.startDate | date: 'mediumDate' }}</p>
                   </div>
-                  <div class="detail-field">
+                  <div class="detail-field flex flex-col gap-1">
                     <label for="due-date">Due Date</label>
                     <p>{{ p.dueDate | date: 'mediumDate' }}</p>
                   </div>
-                  <div class="detail-field">
+                  <div class="detail-field flex flex-col gap-1">
                     <label for="budget">Budget</label>
                     <p>{{ p.budget }}</p>
                   </div>
@@ -221,14 +221,14 @@
                       <mat-icon>attach_file</mat-icon>
                       Attachments
                     </span>
-                    <span class="quick-actions__count">{{ p.attachments }}</span>
+                    <span class="pill pill--xs">{{ p.attachments }}</span>
                   </button>
                   <button type="button" class="quick-actions__row">
                     <span>
                       <mat-icon>chat_bubble_outline</mat-icon>
                       Comments
                     </span>
-                    <span class="quick-actions__count">{{ p.comments }}</span>
+                    <span class="pill pill--xs">{{ p.comments }}</span>
                   </button>
                 </mat-card-content>
               </mat-card>
@@ -245,11 +245,11 @@
                   Add Member
                 </button>
               </mat-card-header>
-              <mat-card-content class="team__list">
+              <mat-card-content class="team__list flex flex-col gap-2">
                 @for (member of p.team; track trackTeam($index, member)) {
                   <div class="team-row">
                     <div class="team-row__identity">
-                      <div class="team-row__avatar" aria-hidden="true">{{ member.avatar }}</div>
+                      <div class="avatar avatar--lg" aria-hidden="true">{{ member.avatar }}</div>
                       <div>
                         <p class="team-row__name">{{ member.name }}</p>
                         <p class="team-row__role">{{ member.role }}</p>

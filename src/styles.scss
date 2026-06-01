@@ -1,8 +1,9 @@
-@use './styles/theme';
-@use './styles/elevation';
-@use './styles/utilities';
-@use './styles/pill'; // Importing the new _pill.scss utility
-@use '@angular/cdk/overlay-prebuilt.css';
+@use "./styles/theme";
+@use "./styles/elevation";
+@use "./styles/utilities";
+@use "./styles/pill";
+@use "./styles/avatar";
+@use "@angular/cdk/overlay-prebuilt.css";
 
 html,
 body {
@@ -15,7 +16,7 @@ html {
 
 body {
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   background-color: var(--sys-background);
   color: var(--sys-on-background);
 }
