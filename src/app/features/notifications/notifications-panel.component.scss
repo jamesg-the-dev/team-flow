@@ -163,19 +163,6 @@
   }
 }
 
-.avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  background: var(--sys-tertiary-container);
-  color: var(--sys-on-tertiary-container);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
 .empty {
   padding: 2.5rem 1rem;
   text-align: center;

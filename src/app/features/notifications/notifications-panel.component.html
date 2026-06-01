@@ -32,7 +32,7 @@
         @for (notification of visible(); track notification.id) {
           <li class="notification" [class.notification--unread]="!notification.isRead" tabindex="0">
             <span class="notification__avatar-wrap">
-              <span class="avatar">{{ notification.avatar }}</span>
+              <span class="avatar avatar--md">{{ notification.avatar }}</span>
               <span class="notification__icon">
                 <mat-icon>{{ iconFor(notification.type) }}</mat-icon>
               </span>
