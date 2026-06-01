@@ -135,7 +135,7 @@ export class ProjectListComponent {
     this.loading.set(true);
     this.error.set(null);
     const status = this.status();
-    const query: any = { pageSize: 100 };
+    const query: any = { pageSize: 100, activeOnly: true };
     if (status && status !== 'all') {
       query.status = toApiStatus(status);
     }

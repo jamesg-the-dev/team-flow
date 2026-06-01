@@ -1,6 +1,6 @@
 <div class="dashboard">
   <header class="dashboard__header">
-    <h1>Good morning, John!</h1>
+    <h1>Good morning, {{ userProfile()?.fullName }}!</h1>
     <p>Here's what's happening with your projects today.</p>
   </header>
 
@@ -66,12 +66,14 @@
         <mat-card-subtitle>Projects you're currently working on</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content class="project-list">
-        @for (project of activeProjects(); track project.name) {
-          <article class="project-item">
+        @for (project of activeProjects(); track project.id) {
+          <a class="project-item" [routerLink]="['/projects', project.id]">
             <div class="project-item__header">
               <div>
                 <h4 class="project-item__name">{{ project.name }}</h4>
-                <p class="project-item__due">Due {{ project.dueDate }}</p>
+                @if (project.dueDate) {
+                  <p class="project-item__due">Due {{ project.dueDate }}</p>
+                }
               </div>
               <span class="pill pill--xs pill--neutral">{{ project.progress }}%</span>
             </div>
@@ -83,7 +85,7 @@
               </span>
               <span class="project-item__meta-item">{{ project.tasks }} tasks</span>
             </div>
-          </article>
+          </a>
         }
       </mat-card-content>
     </mat-card>

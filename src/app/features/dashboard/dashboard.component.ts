@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
@@ -8,14 +17,20 @@ import { ChartConfiguration, ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
 import { ThemeService } from '@core/services/theme.service';
+import { DashboardService, type DashboardResponse } from '@core/services/dashboard.service';
+import { ProjectsApiService } from '@core/services/projects-api.service';
+import type { ProjectSummaryDto } from '@shared/models/project-api';
+import { EMPTY, catchError } from 'rxjs';
 import { withAlpha } from '@shared/utils/color';
 import {
-  ACTIVE_PROJECTS,
   ACTIVITY_DATA,
   DASHBOARD_STATS,
   RECENT_ACTIVITY,
+  RecentActivity,
   VELOCITY_DATA,
+  type ActiveProject,
 } from '@shared/mocks/dashboard.mock';
+import { AuthService } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,22 +42,30 @@ import {
     MatIconModule,
     MatProgressBarModule,
     BaseChartDirective,
+    RouterLink,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   host: {
-    class: 'flex-auto'
+    class: 'flex-auto',
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   private readonly theme = inject(ThemeService);
+  private readonly authService = inject(AuthService);
+  private readonly dashboardApi = inject(DashboardService);
+  private readonly projectsApi = inject(ProjectsApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly stats = signal(DASHBOARD_STATS);
-  readonly recentActivity = signal(RECENT_ACTIVITY);
-  readonly activeProjects = signal(ACTIVE_PROJECTS);
+  readonly recentActivity = signal<readonly RecentActivity[]>([]);
+  readonly activeProjects = signal<readonly ActiveProject[]>([]);
+  readonly workspaceSummary = signal<DashboardResponse | null>(null);
 
   readonly tasksChartType: ChartConfiguration<'bar'>['type'] = 'bar';
+
+  readonly userProfile = this.authService.profile;
 
   readonly tasksChartData = computed<ChartData<'bar'>>(() => {
     const palette = this.theme.chartPalette();
@@ -140,4 +163,69 @@ export class DashboardComponent {
       },
     };
   });
+
+  constructor() {
+    this.loadRemote();
+  }
+
+  private getActiveProjects(): void {
+    this.projectsApi
+      .list({ activeOnly: true, pageSize: 4 })
+      .pipe(
+        catchError(() => EMPTY),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(page => {
+        this.activeProjects.set(page.items.map(p => this.toActiveProject(p)));
+      });
+  }
+
+  private loadWorkspaceSummary(): void {
+    this.dashboardApi
+      .getDashboard()
+      .pipe(
+        catchError(() => EMPTY),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(data => this.workspaceSummary.set(data));
+  }
+
+  private loadRemote(): void {
+    this.getActiveProjects();
+    this.loadWorkspaceSummary();
+
+    this.dashboardApi
+      .getActivity(1, 10)
+      .pipe(
+        catchError(() => EMPTY),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(activity => {
+        if (!activity?.items) return;
+        const items = activity.items.map(i => ({
+          user: i.actorId,
+          action: i.verb,
+          task: i.metadata ?? i.targetKind ?? i.targetId,
+          time: new Date(i.createdAt).toLocaleString(),
+          avatar: (i.actorId ?? '').slice(0, 2).toUpperCase(),
+        }));
+        this.recentActivity.set(items as any);
+      });
+  }
+
+  private toActiveProject(summary: ProjectSummaryDto): ActiveProject {
+    return {
+      id: summary.id,
+      name: summary.name,
+      progress: 0,
+      team: summary.memberCount,
+      tasks: 0,
+      dueDate: summary.dueDate
+        ? new Date(summary.dueDate).toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+          })
+        : undefined,
+    };
+  }
 }

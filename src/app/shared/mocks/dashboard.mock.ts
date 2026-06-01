@@ -27,11 +27,12 @@ export interface RecentActivity {
 }
 
 export interface ActiveProject {
+  readonly id: string;
   readonly name: string;
   readonly progress: number;
   readonly team: number;
   readonly tasks: number;
-  readonly dueDate: string;
+  readonly dueDate?: string;
 }
 
 export const DASHBOARD_STATS: readonly DashboardStat[] = [
@@ -115,8 +116,8 @@ export const RECENT_ACTIVITY: readonly RecentActivity[] = [
 ];
 
 export const ACTIVE_PROJECTS: readonly ActiveProject[] = [
-  { name: 'Product Redesign', progress: 75, team: 5, tasks: 24, dueDate: 'May 30' },
-  { name: 'Mobile App v2', progress: 45, team: 8, tasks: 38, dueDate: 'Jun 15' },
-  { name: 'API Migration', progress: 90, team: 3, tasks: 12, dueDate: 'May 28' },
-  { name: 'Marketing Website', progress: 30, team: 4, tasks: 19, dueDate: 'Jul 1' },
+  { id: '1', name: 'Product Redesign', progress: 75, team: 5, tasks: 24, dueDate: 'May 30' },
+  { id: '2', name: 'Mobile App v2', progress: 45, team: 8, tasks: 38, dueDate: 'Jun 15' },
+  { id: '3', name: 'API Migration', progress: 90, team: 3, tasks: 12, dueDate: 'May 28' },
+  { id: '4', name: 'Marketing Website', progress: 30, team: 4, tasks: 19, dueDate: 'Jul 1' },
 ];

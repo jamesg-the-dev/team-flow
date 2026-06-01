@@ -204,6 +204,7 @@ export interface ListProjectsQuery {
   search?: string;
   page?: number;
   pageSize?: number;
+  activeOnly?: boolean;
 }
 export type ListProjectsResponse = PagedResult<ProjectSummaryDto>;
 
