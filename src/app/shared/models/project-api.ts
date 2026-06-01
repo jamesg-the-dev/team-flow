@@ -155,6 +155,7 @@ export interface ProjectSummaryDto {
   priority: PriorityLevel;
   dueDate: DateOnly | null;
   memberCount: number;
+  memberNames: string[];
 }
 
 export interface ProjectMemberDto {

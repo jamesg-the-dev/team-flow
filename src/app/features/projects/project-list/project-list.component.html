@@ -133,8 +133,10 @@
 
           <div class="project-card__footer">
             <div class="project-card__team">
-              @for (member of project.team.slice(0, 4); track member + $index) {
-                <span class="project-card__avatar" [matTooltip]="member">{{ member }}</span>
+              @for (member of project.team.slice(0, 4); track $index) {
+                <span class="project-card__avatar" [matTooltip]="member.name">{{
+                  member.initials
+                }}</span>
               }
               @if (project.team.length > 4) {
                 <span class="project-card__avatar project-card__avatar--more">
@@ -167,8 +169,10 @@
           </div>
 
           <div class="project-row__team">
-            @for (member of project.team.slice(0, 3); track member + $index) {
-              <span class="project-card__avatar" [matTooltip]="member">{{ member }}</span>
+            @for (member of project.team.slice(0, 3); track $index) {
+              <span class="project-card__avatar" [matTooltip]="member.name">{{
+                member.initials
+              }}</span>
             }
           </div>
 

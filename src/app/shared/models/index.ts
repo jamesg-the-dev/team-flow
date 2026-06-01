@@ -19,7 +19,7 @@ export interface Project {
   description: string;
   status: 'active' | 'planning' | 'on-hold' | 'completed' | 'archived';
   progress: number;
-  team: string[];
+  team: ProjectTeamMember[];
   dueDate: string;
   priority: PriorityLevel;
   column: TaskColumn;
@@ -32,6 +32,7 @@ export interface ProjectTeamMember {
   avatar: string;
   role: string;
   email: string;
+  initials: string;
 }
 
 export interface ProjectActivityEntry {

@@ -15,6 +15,7 @@ import {
   ProjectSummaryDto,
   VelocityPointDto,
 } from '@shared/models/project-api';
+import { getInitials } from './initials';
 
 // ---------------------------------------------------------------------------
 // Casing helpers — API uses PascalCase enums, UI uses lowercase tokens.
@@ -129,11 +130,18 @@ export function summaryToProjectListItem(dto: ProjectSummaryDto): Project {
     description: `${dto.key}`,
     status: toUiStatus(dto.status),
     progress: 0,
-    team: new Array(Math.min(dto.memberCount, 5)).fill('•'),
+    team: dto.memberNames.map(name => ({
+      avatar: '',
+      email: '',
+      id: '',
+      role: '',
+      name: name,
+      initials: getInitials(name),
+    })),
     tasks: { total: 0, completed: 0 },
     dueDate: formatDate(dto.dueDate),
     priority: dto.priority,
-    column: undefined as any, // or set a default TaskColumn if needed
+    column: undefined as any,
   };
 }
 
@@ -162,6 +170,7 @@ export function memberToTeamMember(member: ProjectMemberDto): ProjectTeamMember 
     avatar: display.slice(0, 2).toUpperCase(),
     role: member.role,
     email: '',
+    initials: getInitials(display),
   };
 }
 
