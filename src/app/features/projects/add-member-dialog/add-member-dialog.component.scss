@@ -27,3 +27,40 @@
     color: var(--sys-on-surface-variant);
   }
 }
+
+.member-option {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.25rem 0;
+
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    background: var(--sys-secondary-container);
+    color: var(--sys-on-secondary-container);
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex: 0 0 auto;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 500;
+  }
+
+  &__subtitle {
+    font-size: 0.75rem;
+    color: var(--sys-on-surface-variant);
+  }
+}

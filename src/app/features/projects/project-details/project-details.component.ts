@@ -230,7 +230,10 @@ export class ProjectDetailsComponent {
       .open<AddMemberDialogComponent, AddMemberDialogData, AddMemberResult | undefined>(
         AddMemberDialogComponent,
         {
-          data: { projectName: this.project()?.name },
+          data: {
+            projectName: this.project()?.name,
+            existingMemberIds: (this.project()?.team ?? []).map(m => m.id),
+          },
           autoFocus: 'first-tabbable',
           restoreFocus: true,
         },
@@ -245,7 +248,7 @@ export class ProjectDetailsComponent {
           },
           error: err => {
             console.error('Failed to add member', err);
-            this.snackbar.open(err?.error?.detail ?? 'Could not add member.', 'Dismiss', {
+            this.snackbar.open(err?.error?.title ?? 'Could not add member.', 'Dismiss', {
               duration: 4000,
             });
           },

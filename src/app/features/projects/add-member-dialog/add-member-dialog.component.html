@@ -12,27 +12,49 @@
     </p>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>User ID</mat-label>
+      <mat-label>Workspace member</mat-label>
       <mat-icon matPrefix>person_search</mat-icon>
-      <input
-        matInput
+      <mat-select
         formControlName="userId"
-        placeholder="00000000-0000-0000-0000-000000000000"
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <mat-hint>Paste the user's unique identifier.</mat-hint>
-      @if (form.controls.userId.touched && form.controls.userId.hasError('required')) {
-        <mat-error>User ID is required.</mat-error>
+        [disabled]="loading() || !!loadError() || memberOptions().length === 0"
+      >
+        <mat-select-trigger>
+          {{ selectedMember()?.name }}
+        </mat-select-trigger>
+        @for (member of memberOptions(); track member.userId) {
+          <mat-option [value]="member.userId">
+            <div class="member-option">
+              <span class="member-option__avatar" aria-hidden="true">{{ member.initials }}</span>
+              <span class="member-option__text">
+                <span class="member-option__name">{{ member.name }}</span>
+                @if (member.subtitle) {
+                  <span class="member-option__subtitle">{{ member.subtitle }}</span>
+                }
+              </span>
+            </div>
+          </mat-option>
+        }
+      </mat-select>
+      @if (loading()) {
+        <mat-hint>Loading workspace members…</mat-hint>
+      } @else if (loadError()) {
+        <mat-error>{{ loadError() }}</mat-error>
+      } @else if (memberOptions().length === 0) {
+        <mat-hint>All workspace members are already on this project.</mat-hint>
+      } @else {
+        <mat-hint>Pick a teammate from your workspace.</mat-hint>
       }
-      @if (form.controls.userId.touched && form.controls.userId.hasError('pattern')) {
-        <mat-error>Enter a valid UUID.</mat-error>
+      @if (form.controls.userId.touched && form.controls.userId.hasError('required')) {
+        <mat-error>Please select a member.</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Role</mat-label>
       <mat-select formControlName="role">
+        <mat-select-trigger>
+          {{ selectedRole()?.label }}
+        </mat-select-trigger>
         @for (role of roles; track role.value) {
           <mat-option [value]="role.value">
             <div class="role-option">
