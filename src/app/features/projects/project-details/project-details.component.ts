@@ -24,6 +24,8 @@ import { catchError, finalize, map } from 'rxjs/operators';
 
 import { ProjectsApiService } from '@core/services/projects-api.service';
 import { ThemeService } from '@core/services/theme.service';
+import { VelocityPointDto } from '@shared/models/project-api';
+import { ProjectActivityDto } from '@shared/models/project-api';
 import {
   TeamMembersCardComponent,
   TeamMemberView,
@@ -110,11 +112,8 @@ export class ProjectDetailsComponent {
       project: this.api.get(id),
       members: this.api.listMembers(id).pipe(catchError(() => of([]))),
       stats: this.api.stats(id).pipe(catchError(() => of(undefined))),
-      activity: this.api.activity(id, { pageSize: 25 }).pipe(
-        map(page => page.items),
-        catchError(() => of([])),
-      ),
-      velocity: this.api.velocity(id, { weeks: 12 }).pipe(catchError(() => of([]))),
+      activity: of<ProjectActivityDto[]>([]),
+      velocity: of<VelocityPointDto[]>([]),
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
