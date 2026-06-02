@@ -73,12 +73,12 @@
 
 // ---------- Card view ----------
 .project-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 1.5rem;
   transition: box-shadow 0.2s ease;
-  cursor: pointer;
 
   &:hover {
     box-shadow: var(--elevation-3);
@@ -88,10 +88,25 @@
     }
   }
 
+  &__link {
+    display: contents;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  &__menu-trigger {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 1;
+  }
+
   &__header {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
+    padding-right: 2.5rem;
   }
 
   &__title-block {
@@ -197,10 +212,16 @@
   gap: 1.5rem;
   padding: 1rem 1.5rem;
   transition: background-color 0.2s ease;
-  cursor: pointer;
 
   &:hover {
     background-color: color-mix(in srgb, var(--sys-primary) 4%, transparent);
+  }
+
+  &__link {
+    display: contents;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
   }
 
   &__main {
@@ -250,7 +271,6 @@
 }
 
 // ---------- Priority chip ----------
-
 
 // Destructive menu items pick up the error color.
 ::ng-deep .menu-item--destructive {
