@@ -1,83 +1,69 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router, RouterOutlet } from '@angular/router';
 
-import { CHANNEL_MESSAGES, CHANNELS } from '@shared/mocks/discussions.mock';
-import { Channel, Message } from '@shared/models';
+import { DiscussionsStateService } from './discussions-state.service';
 
 @Component({
   selector: 'app-discussions',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    RouterOutlet,
     MatButtonModule,
-    MatDividerModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatMenuModule,
+    MatProgressSpinnerModule,
     MatTooltipModule,
   ],
+  providers: [DiscussionsStateService],
   templateUrl: './discussions.component.html',
   styleUrl: './discussions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiscussionsComponent {
-  readonly channels = CHANNELS;
-  readonly messages: readonly Message[] = CHANNEL_MESSAGES;
+  protected readonly state = inject(DiscussionsStateService);
+  private readonly router = inject(Router);
 
   readonly channelSearchControl = new FormControl('', { nonNullable: true });
   private readonly channelSearch = toSignal(this.channelSearchControl.valueChanges, {
     initialValue: this.channelSearchControl.value,
   });
 
-  readonly messageControl = new FormControl('', { nonNullable: true });
-  private readonly messageValue = toSignal(this.messageControl.valueChanges, {
-    initialValue: this.messageControl.value,
-  });
-  readonly canSend = computed(() => this.messageValue().trim().length > 0);
+  readonly loadingChannels = this.state.loadingChannels;
+  readonly selectedChannelId = this.state.selectedChannelId;
 
-  readonly selectedChannel = signal<Channel>(this.channels[1]);
-  readonly replyTo = signal<Message | null>(null);
+  readonly publicChannels = computed(() =>
+    this.state.filterChannels('Public', this.channelSearch()),
+  );
+  readonly privateChannels = computed(() =>
+    this.state.filterChannels('Private', this.channelSearch()),
+  );
+  readonly directChannels = computed(() =>
+    this.state.filterChannels('Direct', this.channelSearch()),
+  );
 
-  readonly publicChannels = computed(() => this.filterChannels(false));
-  readonly privateChannels = computed(() => this.filterChannels(true));
-
-  private filterChannels(isPrivate: boolean): readonly Channel[] {
-    const query = this.channelSearch().toLowerCase().trim();
-    return this.channels.filter(
-      c => c.isPrivate === isPrivate && (!query || c.name.toLowerCase().includes(query)),
-    );
+  constructor() {
+    this.state.loadWorkspaceMembers();
+    this.state.loadChannels();
   }
 
-  selectChannel(channel: Channel): void {
-    this.selectedChannel.set(channel);
-    this.replyTo.set(null);
+  selectChannel(channelId: string): void {
+    if (this.selectedChannelId() === channelId) return;
+    void this.router.navigate(['/discussions', channelId]);
   }
 
-  startReply(message: Message): void {
-    this.replyTo.set(message);
-  }
-
-  cancelReply(): void {
-    this.replyTo.set(null);
-  }
-
-  sendMessage(): void {
-    if (!this.canSend()) return;
-    // Persist via API; for the showcase we just clear local state.
-    this.messageControl.setValue('');
-    this.replyTo.set(null);
-  }
-
-  trackById(_: number, item: { id: string }): string {
-    return item.id;
+  openNewChannelDialog(): void {
+    this.state.openNewChannelDialog(id => {
+      void this.router.navigate(['/discussions', id]);
+    });
   }
 }
