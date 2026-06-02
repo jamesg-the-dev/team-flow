@@ -1,47 +1,16 @@
 <div class="panel panel--wide">
-  <header class="panel__header panel__header--row">
-    <div>
-      <h1 class="panel__title">Team</h1>
-      <p class="panel__subtitle">Manage your team members</p>
-    </div>
-    <button mat-flat-button color="primary">
-      <mat-icon>person_add</mat-icon>
-      Invite Member
-    </button>
+  <header class="panel__header">
+    <h1 class="panel__title">Team</h1>
+    <p class="panel__subtitle">Manage your team members</p>
   </header>
 
-  <mat-card appearance="outlined">
-    <mat-card-header
-      ><mat-card-title class="card-title">Team Members</mat-card-title></mat-card-header
-    >
-    <mat-card-content>
-      @if (loading()) {
-        <div class="team-panel__state">
-          <mat-spinner diameter="24"></mat-spinner>
-        </div>
-      } @else if (error()) {
-        <p class="team-panel__state team-panel__state--error">{{ error() }}</p>
-      } @else if (team().length === 0) {
-        <p class="team-panel__state">No team members yet.</p>
-      } @else {
-        <ul class="pref-list">
-          @for (member of team(); track member.id) {
-            <li class="pref">
-              <div class="member">
-                <span class="avatar avatar--md">{{ member.avatar }}</span>
-                <div>
-                  <p class="pref__label">{{ member.name }}</p>
-                  <p class="pref__description">{{ member.description }}</p>
-                </div>
-              </div>
-              <div class="member__actions">
-                <span class="pill pill--xs pill--neutral">{{ member.role }}</span>
-                <button mat-button class="btn--danger">Remove</button>
-              </div>
-            </li>
-          }
-        </ul>
-      }
-    </mat-card-content>
-  </mat-card>
+  <app-team-members-card
+    [members]="team()"
+    [loading]="loading()"
+    [error]="error()"
+    addLabel="Invite Member"
+    removeLabel="Remove from workspace"
+    (add)="inviteMember()"
+    (remove)="removeMember($event)"
+  />
 </div>

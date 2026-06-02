@@ -160,6 +160,7 @@ export interface ProjectSummaryDto {
 
 export interface ProjectMemberDto {
   userId: Guid;
+  fullName: string | null;
   role: ProjectMemberRole;
   addedAt: DateTimeOffset;
 }

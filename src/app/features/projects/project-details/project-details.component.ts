@@ -24,6 +24,10 @@ import { catchError, finalize, map } from 'rxjs/operators';
 
 import { ProjectsApiService } from '@core/services/projects-api.service';
 import { ThemeService } from '@core/services/theme.service';
+import {
+  TeamMembersCardComponent,
+  TeamMemberView,
+} from '@shared/components/team-members-card/team-members-card.component';
 import { withAlpha } from '@shared/utils/color';
 import { ProjectDetails } from '@shared/models';
 import { toApiPriority, toApiStatus, toProjectDetails } from '@shared/utils/project-mappers';
@@ -55,6 +59,7 @@ type TabKey = 'overview' | 'tasks' | 'team' | 'activity' | 'settings';
     MatProgressSpinnerModule,
     MatTabsModule,
     MatTooltipModule,
+    TeamMembersCardComponent,
   ],
   templateUrl: './project-details.component.html',
   styleUrl: './project-details.component.scss',
@@ -136,6 +141,16 @@ export class ProjectDetailsComponent {
     const p = this.project()?.priority;
     return p === 'critical' || p === 'high' ? 'danger' : p === 'medium' ? 'warning' : 'neutral';
   });
+
+  readonly teamView = computed<TeamMemberView[]>(() =>
+    (this.project()?.team ?? []).map(m => ({
+      id: m.id,
+      name: m.name,
+      avatar: m.avatar,
+      role: m.role,
+      secondary: m.email,
+    })),
+  );
 
   // ---- Chart -------------------------------------------------------------
 
@@ -250,7 +265,9 @@ export class ProjectDetailsComponent {
       },
       error: err => {
         console.error('Failed to remove member', err);
-        this.snackbar.open('Could not remove member.', 'Dismiss', { duration: 4000 });
+        this.snackbar.open(err?.error?.title ?? 'Could not remove member.', 'Dismiss', {
+          duration: 4000,
+        });
       },
     });
   }
@@ -292,10 +309,6 @@ export class ProjectDetailsComponent {
 
   goBack(): void {
     this.router.navigate(['/projects']);
-  }
-
-  trackTeam(_index: number, member: { id: string }): string {
-    return member.id;
   }
 
   trackActivity(_index: number, item: { id: string }): string {

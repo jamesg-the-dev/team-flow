@@ -163,14 +163,18 @@ export function projectDtoToListItem(dto: ProjectDto, memberCount = 0): Project 
 
 export function memberToTeamMember(member: ProjectMemberDto): ProjectTeamMember {
   const id = member.userId;
-  const display = shortenGuid(id);
+  const name = member.fullName ?? 'Unknown';
   return {
     id,
-    name: display,
-    avatar: display.slice(0, 2).toUpperCase(),
+    name: name,
+    avatar: name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase(),
     role: member.role,
     email: '',
-    initials: getInitials(display),
+    initials: getInitials(name),
   };
 }
 

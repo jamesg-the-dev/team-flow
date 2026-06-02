@@ -170,7 +170,7 @@
                 <mat-card-header class="mb-2"
                   ><mat-card-title>Project Details</mat-card-title></mat-card-header
                 >
-                <mat-card-content class="detail-fields flex flex-col gap-4">
+                <mat-card-content class="detail-fields flex-col gap-4">
                   <div class="detail-field flex flex-col gap-1">
                     <label for="start-date">Start Date</label>
                     <p>{{ p.startDate | date: 'mediumDate' }}</p>
@@ -237,45 +237,13 @@
         }
         @case ('team') {
           <div class="team">
-            <mat-card appearance="outlined">
-              <mat-card-header class="justify-between item-center mb-2">
-                <mat-card-title>Team Members</mat-card-title>
-                <button mat-flat-button color="primary" (click)="openAddMemberDialog()">
-                  <mat-icon>add</mat-icon>
-                  Add Member
-                </button>
-              </mat-card-header>
-              <mat-card-content class="team__list flex flex-col gap-2">
-                @for (member of p.team; track trackTeam($index, member)) {
-                  <div class="team-row">
-                    <div class="team-row__identity">
-                      <div class="avatar avatar--lg" aria-hidden="true">{{ member.avatar }}</div>
-                      <div>
-                        <p class="team-row__name">{{ member.name }}</p>
-                        <p class="team-row__role">{{ member.role }}</p>
-                        <p class="team-row__email">{{ member.email }}</p>
-                      </div>
-                    </div>
-                    <button
-                      mat-icon-button
-                      [matMenuTriggerFor]="memberMenu"
-                      aria-label="Member options"
-                    >
-                      <mat-icon>more_vert</mat-icon>
-                    </button>
-                    <mat-menu #memberMenu="matMenu">
-                      <button
-                        mat-menu-item
-                        class="menu-item--destructive"
-                        (click)="removeMember(member.id)"
-                      >
-                        <span>Remove from project</span>
-                      </button>
-                    </mat-menu>
-                  </div>
-                }
-              </mat-card-content>
-            </mat-card>
+            <app-team-members-card
+              [members]="teamView()"
+              addLabel="Add Member"
+              removeLabel="Remove from project"
+              (add)="openAddMemberDialog()"
+              (remove)="removeMember($event)"
+            />
           </div>
         }
         @default {

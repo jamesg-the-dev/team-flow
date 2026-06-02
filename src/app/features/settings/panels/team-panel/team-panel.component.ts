@@ -1,29 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import {
   WorkspaceMemberDto,
   WorkspaceMembersApiService,
 } from '@core/services/workspace-members-api.service';
+import {
+  TeamMembersCardComponent,
+  TeamMemberView,
+} from '@shared/components/team-members-card/team-members-card.component';
 import { getInitials } from '@shared/utils/initials';
 
-interface TeamMemberVm {
-  readonly id: string;
-  readonly name: string;
-  readonly description?: string;
-  readonly role: string;
-  readonly avatar: string;
-}
-
-function toVm(member: WorkspaceMemberDto): TeamMemberVm {
+function toView(member: WorkspaceMemberDto): TeamMemberView {
   const name = member.fullName ?? 'Unknown';
+  const title = member.title?.trim();
   return {
     id: member.userId,
     name,
-    description: member.title?.trim() ?? '',
+    secondary: title || undefined,
     role: member.role,
     avatar: getInitials(name),
   };
@@ -32,7 +25,7 @@ function toVm(member: WorkspaceMemberDto): TeamMemberVm {
 @Component({
   selector: 'app-team-panel',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [TeamMembersCardComponent],
   templateUrl: './team-panel.component.html',
   styleUrl: './team-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,7 +37,7 @@ export class TeamPanelComponent {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
 
-  readonly team = computed<TeamMemberVm[]>(() => this.members().map(toVm));
+  readonly team = computed<TeamMemberView[]>(() => this.members().map(toView));
 
   constructor() {
     this.load();
@@ -64,5 +57,13 @@ export class TeamPanelComponent {
         this.loading.set(false);
       },
     });
+  }
+
+  inviteMember(): void {
+    // TODO: open invite-member dialog
+  }
+
+  removeMember(_userId: string): void {
+    // TODO: wire up workspace member removal
   }
 }

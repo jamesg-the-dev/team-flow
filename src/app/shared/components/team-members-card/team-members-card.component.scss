@@ -1,0 +1,90 @@
+:host {
+  display: block;
+}
+
+.team-card {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__state {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem 0;
+    color: var(--sys-on-surface-variant);
+
+    &--error {
+      color: var(--sys-error);
+    }
+  }
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.25rem;
+  border-bottom: 1px solid var(--sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__meta {
+    min-width: 0;
+  }
+
+  &__name {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  &__secondary {
+    margin: 0.125rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--sys-on-surface-variant);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+::ng-deep .menu-item--destructive {
+  color: var(--sys-error);
+
+  mat-icon {
+    color: var(--sys-error);
+  }
+}

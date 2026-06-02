@@ -131,6 +131,7 @@
 
 // ---------- Task stats ----------
 .task-stats {
+    display: flex;
     &__dot {
         display: inline-block;
         width: 0.75rem;
@@ -156,6 +157,9 @@
 }
 
 // ---------- Detail fields ----------
+.detail-fields {
+    display: flex;
+}
 .detail-field {
     label {
         font-size: 0.875rem;
@@ -216,38 +220,6 @@
 .team {
     max-width: 56rem;
     margin: 0 auto;
-}
-
-.team-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-        background-color: color-mix(in srgb, var(--sys-primary) 4%, transparent);
-    }
-
-    &__identity {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    &__name {
-        margin: 0;
-        font-weight: 500;
-    }
-
-    &__role,
-    &__email {
-        margin: 0.125rem 0 0;
-        font-size: 0.75rem;
-        color: var(--sys-on-surface-variant);
-    }
 }
 
 // ---------- Placeholder tabs ----------

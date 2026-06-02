@@ -1,0 +1,55 @@
+<mat-card appearance="outlined">
+  <mat-card-header class="team-card__header">
+    <mat-card-title class="team-card__title">{{ title() }}</mat-card-title>
+    @if (addLabel(); as label) {
+      <button mat-flat-button color="primary" (click)="add.emit()">
+        <mat-icon>add</mat-icon>
+        {{ label }}
+      </button>
+    }
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (loading()) {
+      <div class="team-card__state">
+        <mat-spinner diameter="24" />
+      </div>
+    } @else if (error()) {
+      <p class="team-card__state team-card__state--error">{{ error() }}</p>
+    } @else if (members().length === 0) {
+      <p class="team-card__state">{{ emptyMessage() }}</p>
+    } @else {
+      <ul class="team-card__list">
+        @for (member of members(); track trackById($index, member)) {
+          <li class="team-row">
+            <div class="team-row__identity">
+              <span class="avatar avatar--md" aria-hidden="true">{{ member.avatar }}</span>
+              <div class="team-row__meta">
+                <p class="team-row__name">{{ member.name }}</p>
+                @if (member.secondary) {
+                  <p class="team-row__secondary">{{ member.secondary }}</p>
+                }
+              </div>
+            </div>
+
+            <div class="team-row__actions">
+              <span class="pill pill--xs pill--neutral">{{ member.role }}</span>
+              <button mat-icon-button [matMenuTriggerFor]="memberMenu" aria-label="Member options">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #memberMenu="matMenu">
+                <button
+                  mat-menu-item
+                  class="menu-item--destructive"
+                  (click)="remove.emit(member.id)"
+                >
+                  <span>{{ removeLabel() }}</span>
+                </button>
+              </mat-menu>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </mat-card-content>
+</mat-card>
