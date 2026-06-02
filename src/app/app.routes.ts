@@ -57,8 +57,8 @@ export const routes: Routes = [
       },
       {
         path: 'discussions',
-        loadComponent: () =>
-          import('@features/discussions/discussions.component').then(m => m.DiscussionsComponent),
+        loadChildren: () =>
+          import('@features/discussions/discussions.routes').then(m => m.DISCUSSIONS_ROUTES),
         title: 'Discussions · TeamFlow',
       },
       {

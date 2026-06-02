@@ -5,199 +5,115 @@
         <mat-icon matPrefix>search</mat-icon>
         <input matInput placeholder="Search channels…" [formControl]="channelSearchControl" />
       </mat-form-field>
-      <button mat-flat-button color="primary" class="channels__new">
+      <button
+        mat-flat-button
+        color="primary"
+        class="channels__new"
+        type="button"
+        (click)="openNewChannelDialog()"
+      >
         <mat-icon>add</mat-icon>
         New Channel
       </button>
     </div>
 
     <nav class="channels__nav">
-      <div class="channels__group">
-        <h3 class="channels__group-title">Channels</h3>
-        <ul class="channels__list">
-          @for (channel of publicChannels(); track channel.id) {
-            <li>
-              <button
-                type="button"
-                class="channel"
-                [class.channel--active]="channel.id === selectedChannel().id"
-                (click)="selectChannel(channel)"
-              >
-                <span class="channel__label">
-                  <mat-icon class="channel__icon">tag</mat-icon>
-                  <span>{{ channel.name }}</span>
-                </span>
-                @if (channel.unread) {
-                  <span class="pill pill--xs">{{ channel.unread }}</span>
-                }
-              </button>
-            </li>
-          }
-        </ul>
-      </div>
+      @if (loadingChannels()) {
+        <div class="channels__loading"><mat-spinner diameter="28" /></div>
+      }
 
-      <div class="channels__group">
-        <h3 class="channels__group-title">Private</h3>
-        <ul class="channels__list">
-          @for (channel of privateChannels(); track channel.id) {
-            <li>
-              <button
-                type="button"
-                class="channel"
-                [class.channel--active]="channel.id === selectedChannel().id"
-                (click)="selectChannel(channel)"
-              >
-                <span class="channel__label">
-                  <mat-icon class="channel__icon">lock</mat-icon>
-                  <span>{{ channel.name }}</span>
-                </span>
-              </button>
-            </li>
-          }
-        </ul>
-      </div>
+      @if (publicChannels().length > 0) {
+        <div class="channels__group">
+          <h3 class="channels__group-title">Channels</h3>
+          <ul class="channels__list">
+            @for (channel of publicChannels(); track channel.id) {
+              <li>
+                <button
+                  type="button"
+                  class="channel"
+                  [class.channel--active]="channel.id === selectedChannelId()"
+                  (click)="selectChannel(channel.id)"
+                >
+                  <span class="channel__label">
+                    <mat-icon class="channel__icon">tag</mat-icon>
+                    <span>{{ channel.displayName }}</span>
+                  </span>
+                  @if (channel.unread > 0) {
+                    <span class="pill pill--xs">{{ channel.unread }}</span>
+                  } @else if (channel.isMuted) {
+                    <mat-icon class="channel__icon" matTooltip="Muted">notifications_off</mat-icon>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (privateChannels().length > 0) {
+        <div class="channels__group">
+          <h3 class="channels__group-title">Private</h3>
+          <ul class="channels__list">
+            @for (channel of privateChannels(); track channel.id) {
+              <li>
+                <button
+                  type="button"
+                  class="channel"
+                  [class.channel--active]="channel.id === selectedChannelId()"
+                  (click)="selectChannel(channel.id)"
+                >
+                  <span class="channel__label">
+                    <mat-icon class="channel__icon">lock</mat-icon>
+                    <span>{{ channel.displayName }}</span>
+                  </span>
+                  @if (channel.unread > 0) {
+                    <span class="pill pill--xs">{{ channel.unread }}</span>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (directChannels().length > 0) {
+        <div class="channels__group">
+          <h3 class="channels__group-title">Direct messages</h3>
+          <ul class="channels__list">
+            @for (channel of directChannels(); track channel.id) {
+              <li>
+                <button
+                  type="button"
+                  class="channel"
+                  [class.channel--active]="channel.id === selectedChannelId()"
+                  (click)="selectChannel(channel.id)"
+                >
+                  <span class="channel__label">
+                    <mat-icon class="channel__icon">person</mat-icon>
+                    <span>{{ channel.displayName }}</span>
+                  </span>
+                  @if (channel.unread > 0) {
+                    <span class="pill pill--xs">{{ channel.unread }}</span>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
     </nav>
   </aside>
 
-  <div class="thread">
-    <header class="thread__header">
-      <div class="thread__heading inline-flex items-center gap-2">
-        <mat-icon>{{ selectedChannel().isPrivate ? 'lock' : 'tag' }}</mat-icon>
-        <h2 class="thread__title">{{ selectedChannel().name }}</h2>
-        <span class="pill pill--xs">12 members</span>
+  <div class="discussions__outlet">
+    @if (!outlet.isActivated) {
+      <div class="discussions__placeholder">
+        @if (loadingChannels()) {
+          <mat-spinner diameter="36" />
+        } @else {
+          <p>Select a channel to start chatting.</p>
+        }
       </div>
-      <div class="thread__header-actions inline-flex items-center">
-        <button mat-icon-button matTooltip="Pinned messages" aria-label="Pinned">
-          <mat-icon>push_pin</mat-icon>
-        </button>
-        <button mat-icon-button matTooltip="Search in channel" aria-label="Search">
-          <mat-icon>search</mat-icon>
-        </button>
-        <button mat-icon-button [matMenuTriggerFor]="channelMenu" aria-label="Channel actions">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #channelMenu="matMenu">
-          <button mat-menu-item><mat-icon>info</mat-icon><span>Channel details</span></button>
-          <button mat-menu-item>
-            <mat-icon>notifications</mat-icon><span>Notification settings</span>
-          </button>
-          <mat-divider />
-          <button mat-menu-item><mat-icon>logout</mat-icon><span>Leave channel</span></button>
-        </mat-menu>
-      </div>
-    </header>
-
-    <ol class="thread__messages">
-      @for (msg of messages; track msg.id) {
-        <li class="message">
-          @if (msg.isPinned) {
-            <div class="message__pinned">
-              <mat-icon>push_pin</mat-icon>
-              <span>Pinned by {{ msg.author }}</span>
-            </div>
-          }
-
-          <div class="message__row flex gap-3">
-            <span class="avatar avatar--md" [attr.aria-label]="msg.author">{{ msg.avatar }}</span>
-            <div class="message__body">
-              <header class="message__header flex items-center gap-2 mb-1">
-                <span class="message__author">{{ msg.author }}</span>
-                <span class="message__timestamp">{{ msg.timestamp }}</span>
-              </header>
-              <p class="message__content">{{ msg.content }}</p>
-
-              @if (msg.reactions?.length) {
-                <div class="message__reactions flex items-center gap-1 mt-2">
-                  @for (reaction of msg.reactions; track reaction.emoji) {
-                    <button type="button" class="pill pill--outlined" [matTooltip]="reaction.users.join(', ')">
-                      <span>{{ reaction.emoji }}</span>
-                      <span>{{ reaction.count }}</span>
-                    </button>
-                  }
-                  <button mat-icon-button class="message__add-reaction" aria-label="Add reaction">
-                    <mat-icon>add_reaction</mat-icon>
-                  </button>
-                </div>
-              }
-
-              @if (msg.replies?.length) {
-                <div class="replies">
-                  @for (reply of msg.replies; track reply.id) {
-                    <div class="message__row replies__item flex gap-3">
-                      <span class="avatar avatar--sm" [attr.aria-label]="reply.author">{{
-                        reply.avatar
-                      }}</span>
-                      <div class="message__body">
-                        <header class="message__header flex items-center gap-2 mb-1">
-                          <span class="message__author message__author--sm">{{
-                            reply.author
-                          }}</span>
-                          <span class="message__timestamp">{{ reply.timestamp }}</span>
-                        </header>
-                        <p class="message__content message__content--sm">{{ reply.content }}</p>
-                      </div>
-                    </div>
-                  }
-                  <button type="button" class="replies__cta" (click)="startReply(msg)">
-                    Reply…
-                  </button>
-                </div>
-              } @else {
-                <button type="button" class="message__reply" (click)="startReply(msg)">
-                  Reply
-                </button>
-              }
-            </div>
-          </div>
-        </li>
-      }
-
-      <li class="typing">
-        <span class="avatar avatar--sm">MJ</span>
-        <span>Mike is typing</span>
-        <span class="typing__dots" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
-      </li>
-    </ol>
-
-    <footer class="composer">
-      @if (replyTo(); as parent) {
-        <div class="composer__reply-banner">
-          <span
-            >Replying to <strong>{{ parent.author }}</strong></span
-          >
-          <button type="button" class="composer__reply-cancel" (click)="cancelReply()">
-            Cancel
-          </button>
-        </div>
-      }
-
-      <div class="composer__row flex gap-3">
-        <span class="avatar avatar--md">JD</span>
-        <div class="composer__field flex-1 flex flex-col gap-2">
-          <mat-form-field appearance="outline" class="composer__input" subscriptSizing="dynamic">
-            <input
-              matInput
-              [placeholder]="'Message #' + selectedChannel().name"
-              [formControl]="messageControl"
-              (keydown.enter)="$event.preventDefault(); sendMessage()"
-            />
-          </mat-form-field>
-          <div class="composer__actions flex items-center justify-between">
-            <div class="composer__tools inline-flex gap-1">
-              <button mat-icon-button aria-label="Attach file">
-                <mat-icon>attach_file</mat-icon>
-              </button>
-              <button mat-icon-button aria-label="Add emoji"><mat-icon>mood</mat-icon></button>
-            </div>
-            <button mat-flat-button color="primary" [disabled]="!canSend()" (click)="sendMessage()">
-              <mat-icon>send</mat-icon>
-              Send
-            </button>
-          </div>
-        </div>
-      </div>
-    </footer>
+    }
+    <router-outlet #outlet="outlet" />
   </div>
 </section>

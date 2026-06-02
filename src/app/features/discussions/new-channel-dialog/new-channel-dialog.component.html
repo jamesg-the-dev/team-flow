@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>New conversation</h2>
+<mat-tab-group mat-stretch-tabs="false" [(selectedIndex)]="tabIndex" class="dialog__tabs">
+  <mat-tab label="Channel" class="relative overflow-hidden">
+    <form [formGroup]="channelForm" (ngSubmit)="submitChannel()" novalidate>
+      <mat-dialog-content class="dialog__content">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" placeholder="e.g. product-design" />
+          @if (channelForm.controls.name.touched && channelForm.controls.name.invalid) {
+            <mat-error>Name is required (2+ characters).</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Topic (optional)</mat-label>
+          <input matInput formControlName="topic" placeholder="What is this channel about?" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Visibility</mat-label>
+          <mat-select formControlName="type">
+            <mat-option value="Public">Public — anyone in the workspace can join</mat-option>
+            <mat-option value="Private">Private — invite only</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-button type="button" mat-dialog-close>Cancel</button>
+        <button mat-flat-button color="primary" type="submit">Create channel</button>
+      </mat-dialog-actions>
+    </form>
+  </mat-tab>
+
+  <mat-tab label="Direct message" class="relative overflow-hidden">
+    <form [formGroup]="dmForm" (ngSubmit)="submitDm()" novalidate>
+      <mat-dialog-content class="dialog__content">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Choose a teammate</mat-label>
+          <mat-select formControlName="userId">
+            @for (member of selectableMembers(); track member.userId) {
+              <mat-option [value]="member.userId">
+                <span class="dialog__option">
+                  <span class="avatar avatar--sm">{{ initialsFor(member) }}</span>
+                  <span>{{ member.fullName ?? member.userId }}</span>
+                </span>
+              </mat-option>
+            }
+          </mat-select>
+          @if (dmForm.controls.userId.touched && dmForm.controls.userId.invalid) {
+            <mat-error>Pick a teammate to start a DM.</mat-error>
+          }
+        </mat-form-field>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-button type="button" mat-dialog-close>Cancel</button>
+        <button mat-flat-button color="primary" type="submit">Start DM</button>
+      </mat-dialog-actions>
+    </form>
+  </mat-tab>
+</mat-tab-group>

@@ -1,0 +1,358 @@
+@if (selectedChannel(); as channel) {
+  <section class="thread">
+    <header class="thread__header">
+      <div class="thread__heading inline-flex items-center gap-2">
+        <mat-icon>
+          {{ channel.type === 'Direct' ? 'person' : channel.type === 'Private' ? 'lock' : 'tag' }}
+        </mat-icon>
+        <h2 class="thread__title">{{ channel.displayName }}</h2>
+        @if (channel.topic) {
+          <span class="thread__topic" [matTooltip]="channel.topic">— {{ channel.topic }}</span>
+        }
+      </div>
+      <div class="thread__header-actions inline-flex items-center">
+        <button
+          mat-icon-button
+          type="button"
+          matTooltip="Pinned messages"
+          aria-label="Pinned"
+          (click)="togglePinsPanel()"
+        >
+          <mat-icon [class.thread__icon--active]="pinsOpen()">push_pin</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          [matTooltip]="channel.isMuted ? 'Unmute channel' : 'Mute channel'"
+          (click)="toggleMute(channel)"
+          aria-label="Mute"
+        >
+          <mat-icon>{{ channel.isMuted ? 'notifications_off' : 'notifications' }}</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          [matMenuTriggerFor]="channelMenu"
+          aria-label="Channel actions"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #channelMenu="matMenu">
+          <button mat-menu-item type="button" (click)="openMembersDialog(channel)">
+            <mat-icon>group</mat-icon><span>Members</span>
+          </button>
+          @if (channel.type !== 'Direct') {
+            <button mat-menu-item type="button" (click)="editTopic(channel)">
+              <mat-icon>edit</mat-icon><span>Edit topic</span>
+            </button>
+          }
+          <button mat-menu-item type="button" (click)="toggleMute(channel)">
+            <mat-icon>{{
+              channel.isMuted ? 'notifications_active' : 'notifications_off'
+            }}</mat-icon>
+            <span>{{ channel.isMuted ? 'Unmute channel' : 'Mute channel' }}</span>
+          </button>
+          <mat-divider />
+          @if (channel.type !== 'Direct') {
+            <button mat-menu-item type="button" (click)="leaveChannel(channel)">
+              <mat-icon>logout</mat-icon><span>Leave channel</span>
+            </button>
+            <button mat-menu-item type="button" (click)="deleteChannel(channel)">
+              <mat-icon>delete</mat-icon><span>Delete channel</span>
+            </button>
+          }
+        </mat-menu>
+      </div>
+    </header>
+
+    @if (pinsOpen()) {
+      <section class="pins">
+        <header class="pins__header">
+          <mat-icon>push_pin</mat-icon>
+          <span>Pinned messages</span>
+          <button mat-icon-button type="button" aria-label="Close" (click)="togglePinsPanel()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </header>
+        @if (loadingPins()) {
+          <div class="pins__loading"><mat-spinner diameter="24" /></div>
+        } @else if (pinnedViews().length === 0) {
+          <p class="pins__empty">Nothing pinned yet.</p>
+        } @else {
+          <ul class="pins__list">
+            @for (msg of pinnedViews(); track msg.id) {
+              <li class="pins__item">
+                <span class="pins__author">{{ msg.authorName }}</span>
+                <span class="pins__time">{{ msg.timestamp | date: 'short' }}</span>
+                <p class="pins__body">{{ msg.body }}</p>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
+
+    <ol class="thread__messages">
+      @if (loadingMessages()) {
+        <li class="thread__loading"><mat-spinner diameter="32" /></li>
+      } @else if (rootMessages().length === 0) {
+        <li class="thread__empty">
+          No messages yet. Be the first to say hello in #{{ channel.displayName }}.
+        </li>
+      }
+
+      @for (msg of rootMessages(); track msg.id) {
+        <li class="message">
+          @if (msg.isPinned) {
+            <div class="message__pinned">
+              <mat-icon>push_pin</mat-icon>
+              <span>Pinned by {{ msg.authorName }}</span>
+            </div>
+          }
+
+          <div class="message__row flex gap-3">
+            <span class="avatar avatar--md" [attr.aria-label]="msg.authorName">
+              {{ msg.authorInitials }}
+            </span>
+            <div class="message__body">
+              <header class="message__header flex items-center gap-2 mb-1">
+                <span class="message__author">{{ msg.authorName }}</span>
+                <span class="message__timestamp">{{ msg.timestamp | date: 'shortTime' }}</span>
+                @if (msg.editedAt) {
+                  <span class="message__timestamp">(edited)</span>
+                }
+                <span class="message__spacer"></span>
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="message__menu"
+                  [matMenuTriggerFor]="reactionMenu"
+                  aria-label="Add reaction"
+                >
+                  <mat-icon>add_reaction</mat-icon>
+                </button>
+                <mat-menu #reactionMenu="matMenu" class="reaction-menu">
+                  @for (emoji of quickReactions; track emoji) {
+                    <button mat-menu-item type="button" (click)="toggleReaction(msg, emoji)">
+                      <span class="reaction-menu__emoji">{{ emoji }}</span>
+                    </button>
+                  }
+                </mat-menu>
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="message__menu"
+                  [matMenuTriggerFor]="messageMenu"
+                  aria-label="Message actions"
+                >
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
+                <mat-menu #messageMenu="matMenu">
+                  <button mat-menu-item type="button" (click)="startReply(msg)">
+                    <mat-icon>reply</mat-icon><span>Reply</span>
+                  </button>
+                  <button mat-menu-item type="button" (click)="togglePin(msg)">
+                    <mat-icon>push_pin</mat-icon>
+                    <span>{{ msg.isPinned ? 'Unpin message' : 'Pin message' }}</span>
+                  </button>
+                  @if (msg.isMine) {
+                    <button mat-menu-item type="button" (click)="beginEdit(msg)">
+                      <mat-icon>edit</mat-icon><span>Edit message</span>
+                    </button>
+                    <button mat-menu-item type="button" (click)="deleteMessage(msg)">
+                      <mat-icon>delete</mat-icon><span>Delete message</span>
+                    </button>
+                  }
+                </mat-menu>
+              </header>
+
+              @if (editingMessageId() === msg.id) {
+                <div class="message__edit">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input
+                      matInput
+                      [formControl]="editControl"
+                      (keydown.enter)="$event.preventDefault(); saveEdit(msg.id)"
+                      (keydown.escape)="cancelEdit()"
+                    />
+                  </mat-form-field>
+                  <div class="message__edit-actions">
+                    <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+                    <button mat-flat-button color="primary" type="button" (click)="saveEdit(msg.id)">
+                      Save
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <p class="message__content">{{ msg.body }}</p>
+              }
+
+              @if (msg.reactions.length) {
+                <div class="message__reactions flex items-center gap-1 mt-2">
+                  @for (reaction of msg.reactions; track reaction.emoji) {
+                    <button
+                      type="button"
+                      class="pill pill--outlined"
+                      [class.pill--active]="reaction.reactedByMe"
+                      [matTooltip]="reaction.userNames.join(', ')"
+                      (click)="toggleReaction(msg, reaction.emoji)"
+                    >
+                      <span>{{ reaction.emoji }}</span>
+                      <span>{{ reaction.count }}</span>
+                    </button>
+                  }
+                </div>
+              }
+
+              @if (msg.replyCount > 0 || isThreadOpen(msg.id)) {
+                <div class="replies">
+                  @if (isThreadOpen(msg.id)) {
+                    @for (reply of threadFor(msg.id); track reply.id) {
+                      <div class="message__row replies__item flex gap-3">
+                        <span class="avatar avatar--sm" [attr.aria-label]="reply.authorName">
+                          {{ reply.authorInitials }}
+                        </span>
+                        <div class="message__body">
+                          <header class="message__header flex items-center gap-2 mb-1">
+                            <span class="message__author message__author--sm">
+                              {{ reply.authorName }}
+                            </span>
+                            <span class="message__timestamp">
+                              {{ reply.timestamp | date: 'shortTime' }}
+                            </span>
+                            @if (reply.editedAt) {
+                              <span class="message__timestamp">(edited)</span>
+                            }
+                          </header>
+                          @if (editingMessageId() === reply.id) {
+                            <div class="message__edit">
+                              <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                                <input
+                                  matInput
+                                  [formControl]="editControl"
+                                  (keydown.enter)="$event.preventDefault(); saveEdit(reply.id)"
+                                  (keydown.escape)="cancelEdit()"
+                                />
+                              </mat-form-field>
+                              <div class="message__edit-actions">
+                                <button mat-button type="button" (click)="cancelEdit()">
+                                  Cancel
+                                </button>
+                                <button
+                                  mat-flat-button
+                                  color="primary"
+                                  type="button"
+                                  (click)="saveEdit(reply.id)"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                          } @else {
+                            <p class="message__content message__content--sm">{{ reply.body }}</p>
+                          }
+                          @if (reply.isMine) {
+                            <div class="replies__actions">
+                              <button
+                                type="button"
+                                class="message__reply"
+                                (click)="beginEdit(reply)"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                class="message__reply"
+                                (click)="deleteMessage(reply)"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  }
+                  <button type="button" class="replies__cta" (click)="toggleThread(msg.id)">
+                    {{
+                      isThreadOpen(msg.id)
+                        ? 'Hide replies'
+                        : 'View ' +
+                          msg.replyCount +
+                          ' ' +
+                          (msg.replyCount === 1 ? 'reply' : 'replies')
+                    }}
+                  </button>
+                </div>
+              } @else {
+                <button type="button" class="message__reply" (click)="startReply(msg)">
+                  Reply
+                </button>
+              }
+            </div>
+          </div>
+        </li>
+      }
+    </ol>
+
+    <footer class="composer">
+      @if (replyToView(); as parent) {
+        <div class="composer__reply-banner">
+          <span>
+            Replying to <strong>{{ parent.authorName }}</strong>
+          </span>
+          <button type="button" class="composer__reply-cancel" (click)="cancelReply()">
+            Cancel
+          </button>
+        </div>
+      }
+
+      <div class="composer__row flex gap-3">
+        <span class="avatar avatar--md">
+          {{ currentUserInitials() }}
+        </span>
+        <div class="composer__field flex-1 flex flex-col gap-2">
+          <mat-form-field appearance="outline" class="composer__input" subscriptSizing="dynamic">
+            <input
+              matInput
+              [placeholder]="'Message #' + channel.displayName"
+              [formControl]="messageControl"
+              (keydown.enter)="$event.preventDefault(); sendMessage()"
+            />
+          </mat-form-field>
+          <div class="composer__actions flex items-center justify-between">
+            <div class="composer__tools inline-flex gap-1">
+              <button mat-icon-button type="button" aria-label="Attach file" disabled>
+                <mat-icon>attach_file</mat-icon>
+              </button>
+              <div class="composer__emoji">
+                <button
+                  mat-icon-button
+                  type="button"
+                  aria-label="Add emoji"
+                  [class.composer__emoji-btn--active]="emojiPickerOpen()"
+                  (click)="toggleEmojiPicker()"
+                >
+                  <mat-icon>mood</mat-icon>
+                </button>
+                @if (emojiPickerOpen()) {
+                  <div class="composer__emoji-popover" #emojiPickerHost></div>
+                }
+              </div>
+            </div>
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              [disabled]="!canSend() || sending()"
+              (click)="sendMessage()"
+            >
+              <mat-icon>send</mat-icon>
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </section>
+}

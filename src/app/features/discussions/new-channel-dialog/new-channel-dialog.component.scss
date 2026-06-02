@@ -1,0 +1,21 @@
+:host {
+    display: block;
+    min-width: 24rem;
+}
+
+.dialog__tabs {
+    margin-top: 0.5rem;
+}
+
+.dialog__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1rem;
+}
+
+.dialog__option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
