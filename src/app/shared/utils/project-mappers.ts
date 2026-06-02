@@ -16,6 +16,7 @@ import {
   VelocityPointDto,
 } from '@shared/models/project-api';
 import { getInitials } from './initials';
+import { MOCK_PROGRESS_HISTORY, MOCK_RECENT_ACTIVITY } from '@shared/mocks/project-details.mock';
 
 // ---------------------------------------------------------------------------
 // Casing helpers — API uses PascalCase enums, UI uses lowercase tokens.
@@ -105,11 +106,11 @@ export function formatBudget(cents: number | null, currency: string | null): str
   try {
     return new Intl.NumberFormat(undefined, {
       style: 'currency',
-      currency: currency ?? 'USD',
+      currency: currency ?? 'AUD',
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `${currency ?? 'USD'} ${amount.toFixed(0)}`;
+    return `${currency ?? 'AUD'} ${amount.toFixed(0)}`;
   }
 }
 
@@ -191,6 +192,7 @@ export function activityToEntry(entry: ProjectActivityDto): ProjectActivityEntry
 }
 
 export function velocityToProgressHistory(points: VelocityPointDto[]): ProjectProgressPoint[] {
+  if (points.length === 0) return MOCK_PROGRESS_HISTORY;
   return points.map(p => ({ week: formatWeekLabel(p.weekStart), completed: p.completed }));
 }
 
@@ -222,6 +224,6 @@ export function toProjectDetails(
     attachments: 0,
     comments: 0,
     progressHistory: velocityToProgressHistory(velocity),
-    recentActivity: activity.map(activityToEntry),
+    recentActivity: activity.length === 0 ? MOCK_RECENT_ACTIVITY : activity.map(activityToEntry),
   };
 }
