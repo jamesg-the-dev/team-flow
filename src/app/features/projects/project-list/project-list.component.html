@@ -67,124 +67,132 @@
   } @else if (view() === 'grid') {
     <section class="projects__grid">
       @for (project of filteredProjects(); track trackById($index, project)) {
-        <mat-card
-          appearance="outlined"
-          class="project-card"
-          [routerLink]="['/projects', project.id]"
-        >
-          <div class="project-card__header">
-            <div class="project-card__title-block">
-              <h3 class="project-card__name">{{ project.name }}</h3>
-              <p class="project-card__description">{{ project.description }}</p>
+        <mat-card appearance="outlined" class="project-card">
+          <a
+            class="project-card__link"
+            [routerLink]="['/projects', project.id]"
+            [attr.aria-label]="'Open project ' + project.name"
+          >
+            <div class="project-card__header">
+              <div class="project-card__title-block">
+                <h3 class="project-card__name">{{ project.name }}</h3>
+                <p class="project-card__description">{{ project.description }}</p>
+              </div>
             </div>
-            <button
-              mat-icon-button
-              [matMenuTriggerFor]="cardMenu"
-              aria-label="Project options"
-              (click)="$event.stopPropagation()"
-            >
-              <mat-icon>more_vert</mat-icon>
+
+            <div class="project-card__progress">
+              <div class="project-card__progress-label">
+                <span>Progress</span>
+                <span class="project-card__progress-value">{{ project.progress }}%</span>
+              </div>
+              <mat-progress-bar mode="determinate" [value]="project.progress" />
+            </div>
+
+            <div class="project-card__stats">
+              <span class="project-card__stat">
+                <mat-icon>track_changes</mat-icon>
+                {{ project.tasks?.completed ?? 0 }}/{{ project.tasks?.total ?? 0 }}
+              </span>
+              <span class="project-card__stat">
+                <mat-icon>event</mat-icon>
+                {{ project.dueDate.split(',')[0] }}
+              </span>
+            </div>
+
+            <mat-divider />
+
+            <div class="project-card__footer">
+              <div class="project-card__team">
+                @for (member of project.team.slice(0, 4); track $index) {
+                  <span class="project-card__avatar" [matTooltip]="member.name">{{
+                    member.initials
+                  }}</span>
+                }
+                @if (project.team.length > 4) {
+                  <span class="project-card__avatar project-card__avatar--more">
+                    +{{ project.team.length - 4 }}
+                  </span>
+                }
+              </div>
+              <span class="pill pill--sm pill--{{ project.priority }}">
+                {{ project.priority }}
+              </span>
+            </div>
+          </a>
+
+          <button
+            mat-icon-button
+            class="project-card__menu-trigger"
+            [matMenuTriggerFor]="cardMenu"
+            aria-label="Project options"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #cardMenu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>edit</mat-icon>
+              <span>Edit project</span>
             </button>
-            <mat-menu #cardMenu="matMenu">
-              <button mat-menu-item>
-                <mat-icon>edit</mat-icon>
-                <span>Edit project</span>
-              </button>
-              <button mat-menu-item>
-                <mat-icon>content_copy</mat-icon>
-                <span>Duplicate</span>
-              </button>
-              <mat-divider />
-              <button mat-menu-item (click)="archive(project, $event)">
-                <mat-icon>archive</mat-icon>
-                <span>Archive</span>
-              </button>
-              <button
-                mat-menu-item
-                class="menu-item--destructive"
-                (click)="remove(project, $event)"
-              >
-                <mat-icon>delete</mat-icon>
-                <span>Delete</span>
-              </button>
-            </mat-menu>
-          </div>
-
-          <div class="project-card__progress">
-            <div class="project-card__progress-label">
-              <span>Progress</span>
-              <span class="project-card__progress-value">{{ project.progress }}%</span>
-            </div>
-            <mat-progress-bar mode="determinate" [value]="project.progress" />
-          </div>
-
-          <div class="project-card__stats">
-            <span class="project-card__stat">
-              <mat-icon>track_changes</mat-icon>
-              {{ project.tasks?.completed ?? 0 }}/{{ project.tasks?.total ?? 0 }}
-            </span>
-            <span class="project-card__stat">
-              <mat-icon>event</mat-icon>
-              {{ project.dueDate.split(',')[0] }}
-            </span>
-          </div>
-
-          <mat-divider />
-
-          <div class="project-card__footer">
-            <div class="project-card__team">
-              @for (member of project.team.slice(0, 4); track $index) {
-                <span class="project-card__avatar" [matTooltip]="member.name">{{
-                  member.initials
-                }}</span>
-              }
-              @if (project.team.length > 4) {
-                <span class="project-card__avatar project-card__avatar--more">
-                  +{{ project.team.length - 4 }}
-                </span>
-              }
-            </div>
-            <span class="pill pill--sm pill--{{ project.priority }}">
-              {{ project.priority }}
-            </span>
-          </div>
+            <button mat-menu-item>
+              <mat-icon>content_copy</mat-icon>
+              <span>Duplicate</span>
+            </button>
+            <mat-divider />
+            <button mat-menu-item (click)="archive(project, $event)">
+              <mat-icon>archive</mat-icon>
+              <span>Archive</span>
+            </button>
+            <button
+              mat-menu-item
+              class="menu-item--destructive"
+              (click)="remove(project, $event)"
+            >
+              <mat-icon>delete</mat-icon>
+              <span>Delete</span>
+            </button>
+          </mat-menu>
         </mat-card>
       }
     </section>
   } @else {
     <mat-card appearance="outlined" class="projects__list">
       @for (project of filteredProjects(); track trackById($index, project); let last = $last) {
-        <div class="project-row" [routerLink]="['/projects', project.id]">
-          <div class="project-row__main">
-            <h3 class="project-row__name">{{ project.name }}</h3>
-            <p class="project-row__description">{{ project.description }}</p>
-          </div>
-
-          <div class="project-row__progress">
-            <div class="project-row__progress-label">
-              <span>Progress</span>
-              <span class="project-row__progress-value">{{ project.progress }}%</span>
+        <div class="project-row">
+          <a
+            class="project-row__link"
+            [routerLink]="['/projects', project.id]"
+            [attr.aria-label]="'Open project ' + project.name"
+          >
+            <div class="project-row__main">
+              <h3 class="project-row__name">{{ project.name }}</h3>
+              <p class="project-row__description">{{ project.description }}</p>
             </div>
-            <mat-progress-bar mode="determinate" [value]="project.progress" />
-          </div>
 
-          <div class="project-row__team">
-            @for (member of project.team.slice(0, 3); track $index) {
-              <span class="project-card__avatar" [matTooltip]="member.name">{{
-                member.initials
-              }}</span>
-            }
-          </div>
+            <div class="project-row__progress">
+              <div class="project-row__progress-label">
+                <span>Progress</span>
+                <span class="project-row__progress-value">{{ project.progress }}%</span>
+              </div>
+              <mat-progress-bar mode="determinate" [value]="project.progress" />
+            </div>
 
-          <span class="pill pill--sm pill--{{ project.priority }}">
-            {{ project.priority }}
-          </span>
+            <div class="project-row__team">
+              @for (member of project.team.slice(0, 3); track $index) {
+                <span class="project-card__avatar" [matTooltip]="member.name">{{
+                  member.initials
+                }}</span>
+              }
+            </div>
+
+            <span class="pill pill--sm pill--{{ project.priority }}">
+              {{ project.priority }}
+            </span>
+          </a>
 
           <button
             mat-icon-button
             [matMenuTriggerFor]="rowMenu"
             aria-label="Project options"
-            (click)="$event.stopPropagation()"
           >
             <mat-icon>more_vert</mat-icon>
           </button>

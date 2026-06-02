@@ -29,7 +29,7 @@
     matTooltipPosition="right"
     aria-label="Account menu"
   >
-    @if (avatarPath(); as path) {
+    @if (profile() && avatarPath(); as path) {
       <img class="sidebar__avatar sidebar__avatar--image w-full h-full" [src]="path" alt="Avatar" />
     } @else {
       <div

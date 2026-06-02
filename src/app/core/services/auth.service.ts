@@ -21,22 +21,21 @@ export class AuthService {
   readonly user = computed<User | null>(() => this._session()?.user ?? null);
   readonly isAuthenticated = computed(() => this._session() !== null);
 
-  constructor() {
-    this.supabase.client.auth.getSession().then(({ data }) => {
-      this._session.set(data.session);
-      this._initialized.set(true);
-      if (data.session) {
-        void this.fetchProfile().catch(() => this._profile.set(null));
-      }
-    });
+  private profileUserId: string | null = null;
+  private profileInFlight: Promise<void> | null = null;
+  private readonly ready: Promise<void>;
 
-    this.supabase.client.auth.onAuthStateChange((_event, session) => {
-      this._session.set(session);
-      if (session) {
-        void this.fetchProfile().catch(() => this._profile.set(null));
-      } else {
-        this._profile.set(null);
-      }
+  constructor() {
+    this.ready = new Promise<void>(resolve => {
+      const { data } = this.supabase.client.auth.onAuthStateChange((_event, session) => {
+        this._session.set(session);
+        void this.syncProfile(session);
+        if (!this._initialized()) {
+          this._initialized.set(true);
+          resolve();
+        }
+      });
+      void data;
     });
   }
 
@@ -66,16 +65,23 @@ export class AuthService {
     if (this._initialized()) {
       return;
     }
-    const { data } = await this.supabase.client.auth.getSession();
-    this._session.set(data.session);
-    this._initialized.set(true);
-    if (data.session) {
-      try {
-        await this.fetchProfile();
-      } catch {
-        this._profile.set(null);
-      }
+    await this.ready;
+  }
+
+  private syncProfile(session: Session | null): Promise<void> {
+    const userId = session?.user?.id ?? null;
+    if (userId === this.profileUserId) {
+      return this.profileInFlight ?? Promise.resolve();
     }
+    this.profileUserId = userId;
+    if (!userId) {
+      this._profile.set(null);
+      this.profileInFlight = null;
+      return Promise.resolve();
+    }
+    const inflight = this.fetchProfile().catch(() => this._profile.set(null));
+    this.profileInFlight = inflight;
+    return inflight;
   }
 
   private async fetchProfile(): Promise<void> {

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -31,33 +38,25 @@ interface NavItem {
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   host: {
-    class: 'block h-full'
+    class: 'block h-full',
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly meApi = inject(MeApiService);
 
   readonly user = this.auth.user;
-  protected readonly profile = signal<UserProfile | null>(null);
+  protected readonly profile = this.auth.profile;
 
   readonly avatarPath = computed(() => this.profile()?.avatarPath ?? null);
 
   readonly displayName = computed(() => {
     const p = this.profile();
-    return p?.displayName?.trim() || p?.fullName?.trim() || this.auth.user()?.email || '';
+    return p?.fullName?.trim() || this.auth.user()?.email || '';
   });
 
   readonly userInitials = computed(() => getInitials(this.displayName()));
-
-  ngOnInit(): void {
-    this.meApi.getProfile().subscribe({
-      next: profile => this.profile.set(profile),
-      error: () => this.profile.set(null),
-    });
-  }
 
   readonly navItems: readonly NavItem[] = [
     { label: 'Dashboard', href: '/dashboard', icon: 'dashboard' },
