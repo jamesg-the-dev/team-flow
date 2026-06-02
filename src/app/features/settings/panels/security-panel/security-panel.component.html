@@ -10,15 +10,20 @@
       <form class="form" [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
         <mat-form-field appearance="outline">
           <mat-label>Current Password</mat-label>
-          <input matInput type="password" formControlName="current" />
+          <input
+            matInput
+            type="password"
+            formControlName="current"
+            autocomplete="current-password"
+          />
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>New Password</mat-label>
-          <input matInput type="password" formControlName="next" />
+          <input matInput type="password" formControlName="next" autocomplete="new-password" />
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Confirm New Password</mat-label>
-          <input matInput type="password" formControlName="confirm" />
+          <input matInput type="password" formControlName="confirm" autocomplete="new-password" />
         </mat-form-field>
         <div class="form__actions">
           <button mat-flat-button color="primary" type="submit">Update Password</button>

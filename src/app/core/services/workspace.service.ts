@@ -5,4 +5,5 @@ import { environment } from '../../../environments/environment';
 export class WorkspaceService {
   readonly workspaceId = environment.workspaceId;
   readonly base = `${environment.apiUrl}/api/v1/workspaces/${this.workspaceId}`;
+
 }

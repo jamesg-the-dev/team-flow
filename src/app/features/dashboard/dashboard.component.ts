@@ -25,7 +25,6 @@ import { withAlpha } from '@shared/utils/color';
 import {
   ACTIVITY_DATA,
   DASHBOARD_STATS,
-  RECENT_ACTIVITY,
   RecentActivity,
   VELOCITY_DATA,
   type ActiveProject,

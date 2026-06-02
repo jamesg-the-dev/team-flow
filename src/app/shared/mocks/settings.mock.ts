@@ -1,10 +1,3 @@
-export interface TeamMember {
-  readonly name: string;
-  readonly email: string;
-  readonly role: 'Owner' | 'Admin' | 'Member';
-  readonly avatar: string;
-}
-
 export interface NotificationPreference {
   readonly id: string;
   readonly label: string;
@@ -19,14 +12,6 @@ export interface ActiveSession {
   readonly time: string;
   readonly current: boolean;
 }
-
-export const TEAM_MEMBERS: readonly TeamMember[] = [
-  { name: 'John Doe', email: 'john@acme.com', role: 'Owner', avatar: 'JD' },
-  { name: 'Sarah Chen', email: 'sarah@acme.com', role: 'Admin', avatar: 'SC' },
-  { name: 'Mike Johnson', email: 'mike@acme.com', role: 'Member', avatar: 'MJ' },
-  { name: 'Emily Davis', email: 'emily@acme.com', role: 'Member', avatar: 'ED' },
-  { name: 'Alex Kumar', email: 'alex@acme.com', role: 'Member', avatar: 'AK' },
-];
 
 export const EMAIL_NOTIFICATIONS: readonly NotificationPreference[] = [
   {

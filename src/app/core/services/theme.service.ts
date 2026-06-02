@@ -5,10 +5,6 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 
 const STORAGE_KEY = 'teamflow.theme';
 
-/**
- * Resolved palette of theme tokens that are safe to pass to libraries that
- * cannot consume CSS custom properties (e.g. Chart.js / ng2-charts).
- */
 export interface ChartPalette {
   primary: string;
   onPrimary: string;
@@ -22,33 +18,16 @@ export interface ChartPalette {
   tertiary: string;
 }
 
-/**
- * Manages the application color theme.
- *
- * Strategy:
- *   - `system` (default) follows the OS `prefers-color-scheme` preference
- *     via the CSS `@media` rule defined in `_theme.scss`.
- *   - `light` / `dark` are explicit overrides applied by setting the
- *     `data-theme` attribute on `<html>`, which our SCSS keys off.
- */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly _mode = signal<ThemeMode>('system');
-  /** Bumps whenever the resolved palette may have changed. */
   private readonly _paletteVersion = signal(0);
   private readonly document = inject(DOCUMENT);
   private readonly platformId = inject(PLATFORM_ID);
 
   readonly mode = this._mode.asReadonly();
 
-  /**
-   * Reactive snapshot of theme colors resolved from the active M3
-   * `--sys-*` tokens. Recomputes whenever the theme mode changes or the
-   * OS color-scheme preference flips. Useful for libraries that cannot
-   * consume CSS custom properties directly (e.g. Chart.js).
-   */
   readonly chartPalette = computed<ChartPalette>(() => {
-    // Establish dependencies so the computed re-evaluates on theme changes.
     this._mode();
     this._paletteVersion();
     return this.readChartPalette();
@@ -61,8 +40,6 @@ export class ThemeService {
         this.setMode(stored);
       }
 
-      // When in `system` mode, react to OS-level color-scheme changes so
-      // theme-derived values (like chart palettes) refresh automatically.
       const mql = window.matchMedia('(prefers-color-scheme: dark)');
       mql.addEventListener('change', () => {
         if (this._mode() === 'system') {
@@ -91,13 +68,11 @@ export class ThemeService {
 
   toggle(): void {
     const current = this._mode();
-    // system -> dark -> light -> system
     this.setMode(current === 'system' ? 'dark' : current === 'dark' ? 'light' : 'system');
   }
 
   private readChartPalette(): ChartPalette {
     if (!isPlatformBrowser(this.platformId)) {
-      // Sensible fallback (M3 azure light primary) for SSR / tests.
       return {
         primary: '#415f91',
         onPrimary: '#ffffff',

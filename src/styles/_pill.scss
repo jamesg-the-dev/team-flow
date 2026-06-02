@@ -1,6 +1,3 @@
-// Pill utility class for status badges, chips, and labels
-// Usage: <span class="pill pill--xs pill--success">Active</span>
-
 .pill {
   display: inline-flex;
   align-items: center;
@@ -14,7 +11,9 @@
   border: none;
   background: var(--sys-secondary-container);
   color: var(--sys-on-secondary-container);
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 // Sizes

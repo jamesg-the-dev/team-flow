@@ -1,4 +1,4 @@
-@use '../panel-shared' as *;
+@use "../panel-shared" as *;
 
 .member {
   display: flex;
@@ -11,7 +11,16 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+  }
+}
 
+.team-panel__state {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0;
+  color: var(--mat-sys-on-surface-variant);
 
+  &--error {
+    color: var(--sys-error);
   }
 }
