@@ -9,6 +9,11 @@
         @if (channel.topic) {
           <span class="thread__topic" [matTooltip]="channel.topic">— {{ channel.topic }}</span>
         }
+        @if (memberCount(); as count) {
+          @if (count > 0) {
+            <span class="pill pill--xs">{{ count }} members</span>
+          }
+        }
       </div>
       <div class="thread__header-actions inline-flex items-center">
         <button
@@ -178,7 +183,12 @@
                   </mat-form-field>
                   <div class="message__edit-actions">
                     <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
-                    <button mat-flat-button color="primary" type="button" (click)="saveEdit(msg.id)">
+                    <button
+                      mat-flat-button
+                      color="primary"
+                      type="button"
+                      (click)="saveEdit(msg.id)"
+                    >
                       Save
                     </button>
                   </div>

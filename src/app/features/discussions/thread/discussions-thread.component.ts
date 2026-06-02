@@ -101,6 +101,7 @@ export class DiscussionsThreadComponent {
   readonly pinsOpen = signal(false);
   readonly pinnedMessages = signal<readonly MessageDto[]>([]);
   readonly loadingPins = signal(false);
+  readonly memberCount = signal(0);
 
   readonly messageControl = new FormControl('', { nonNullable: true });
   readonly editControl = new FormControl('', { nonNullable: true });
@@ -148,6 +149,19 @@ export class DiscussionsThreadComponent {
               return EMPTY;
             }),
             finalize(() => this.loadingMessages.set(false)),
+          ),
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe();
+
+    toObservable(this.channelId)
+      .pipe(
+        distinctUntilChanged(),
+        switchMap(id =>
+          this.api.getChannel(id).pipe(
+            tap(channel => this.memberCount.set(channel.memberCount)),
+            catchError(() => EMPTY),
           ),
         ),
         takeUntilDestroyed(),
@@ -223,6 +237,7 @@ export class DiscussionsThreadComponent {
     this.pinsOpen.set(false);
     this.pinnedMessages.set([]);
     this.messages.set([]);
+    this.memberCount.set(0);
     this.messageControl.setValue('');
   }
 

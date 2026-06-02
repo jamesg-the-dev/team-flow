@@ -182,12 +182,18 @@ export class DiscussionsStateService {
             .createChannel({ name: result.name, topic: result.topic, type: result.type })
             .subscribe({
               next: created => this.adoptChannel(created.id, onCreated),
-              error: () => this.toast('Failed to create channel.'),
+              error: err => {
+                const message = err?.error?.title ?? 'Failed to create channel.';
+                this.toast(message);
+              },
             });
         } else {
           this.api.createDm({ userId: result.userId }).subscribe({
             next: created => this.adoptChannel(created.id, onCreated),
-            error: () => this.toast('Failed to start DM.'),
+            error: err => {
+              const message = err?.error?.title ?? 'Failed to start DM.';
+              this.toast(message);
+            },
           });
         }
       });

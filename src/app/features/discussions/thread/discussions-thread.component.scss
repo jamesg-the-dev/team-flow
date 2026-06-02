@@ -4,7 +4,6 @@
   min-width: 0;
 }
 
-// Thread / messages ----------------------------------------------------------
 .thread {
   flex: 1;
   display: flex;
@@ -24,7 +23,11 @@
     flex-shrink: 0;
   }
 
-  &__title { margin: 0; font: 700 1rem/1 inherit; }
+  &__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
 
   &__topic {
     font-size: 0.8125rem;
@@ -35,7 +38,9 @@
     max-width: 24rem;
   }
 
-  &__icon--active { color: var(--sys-primary); }
+  &__icon--active {
+    color: var(--sys-primary);
+  }
 
   &__messages {
     list-style: none;
@@ -71,19 +76,37 @@
     font-size: 0.6875rem;
     color: var(--sys-on-surface-variant);
 
-    mat-icon { font-size: 0.875rem; width: 0.875rem; height: 0.875rem; }
+    mat-icon {
+      font-size: 0.875rem;
+      width: 0.875rem;
+      height: 0.875rem;
+    }
   }
 
-  &__row { display: flex; gap: 0.75rem; }
+  &__row {
+    display: flex;
+    gap: 0.75rem;
+  }
 
-  &__header { display: flex; }
-  &__spacer { flex: 1; }
-  &__menu { opacity: 0.6; transition: opacity 0.15s ease; }
-  &__menu:hover { opacity: 1; }
+  &__header {
+    display: flex;
+  }
+  &__spacer {
+    flex: 1;
+  }
+  &__menu {
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+  }
+  &__menu:hover {
+    opacity: 1;
+  }
 
   &__author {
     font-weight: 600;
-    &--sm { font-size: 0.875rem; }
+    &--sm {
+      font-size: 0.875rem;
+    }
   }
 
   &__timestamp {
@@ -95,14 +118,18 @@
     margin: 0;
     font-size: 0.9375rem;
     line-height: 1.5;
-    &--sm { font-size: 0.875rem; }
+    &--sm {
+      font-size: 0.875rem;
+    }
   }
 
   &__reply {
     margin-top: 0.5rem;
     font-size: 0.75rem;
     color: var(--sys-on-surface-variant);
-    &:hover { color: var(--sys-on-surface); }
+    &:hover {
+      color: var(--sys-on-surface);
+    }
   }
 
   &__edit {
@@ -110,7 +137,9 @@
     flex-direction: column;
     gap: 0.5rem;
 
-    mat-form-field { width: 100%; }
+    mat-form-field {
+      width: 100%;
+    }
 
     &-actions {
       display: flex;
@@ -120,7 +149,6 @@
   }
 }
 
-// Shared bare button reset for inline text actions.
 .message__reply,
 .replies__cta,
 .composer__reply-cancel {
@@ -142,7 +170,9 @@
     align-self: flex-start;
     color: var(--sys-primary);
     font-size: 0.75rem;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__actions {
@@ -157,7 +187,6 @@
   border-color: var(--sys-primary);
 }
 
-// Pins panel -----------------------------------------------------------------
 .pins {
   border-bottom: 1px solid var(--sys-outline-variant);
   background: var(--sys-surface-container);
@@ -172,10 +201,15 @@
     gap: 0.5rem;
     font: 600 0.875rem/1 inherit;
 
-    button { margin-left: auto; }
+    button {
+      margin-left: auto;
+    }
   }
 
-  &__loading { display: flex; justify-content: center; }
+  &__loading {
+    display: flex;
+    justify-content: center;
+  }
 
   &__empty {
     margin: 0;
@@ -203,7 +237,9 @@
     gap: 0.25rem 0.5rem;
   }
 
-  &__author { font: 600 0.8125rem/1 inherit; }
+  &__author {
+    font: 600 0.8125rem/1 inherit;
+  }
   &__time {
     font-size: 0.75rem;
     color: var(--sys-on-surface-variant);
@@ -216,9 +252,10 @@
   }
 }
 
-.reaction-menu__emoji { font-size: 1.125rem; }
+.reaction-menu__emoji {
+  font-size: 1.125rem;
+}
 
-// Composer -------------------------------------------------------------------
 .composer {
   padding: 1rem 1.5rem 1.25rem;
   border-top: 1px solid var(--sys-outline-variant);
@@ -239,17 +276,23 @@
   &__reply-cancel {
     color: var(--sys-primary);
     font-size: 0.75rem;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
-  &__input { width: 100%; }
+  &__input {
+    width: 100%;
+  }
 
   &__emoji {
     position: relative;
     display: inline-flex;
   }
 
-  &__emoji-btn--active { color: var(--sys-primary); }
+  &__emoji-btn--active {
+    color: var(--sys-primary);
+  }
 
   &__emoji-popover {
     position: absolute;
