@@ -1,22 +1,12 @@
-@use '@angular/material/core/theming/theming' with (
+@use "@angular/material/core/theming/theming" with (
   $theme-ignore-duplication-warnings: true
 );
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
-// We intentionally emit base theme styles for the light theme and color-only
+// Intentionally emit base theme styles for the light theme and color-only
 // overrides for the dark theme; the configured `with` above tells Angular
 // Material to suppress the duplicate-style warning that would otherwise be
 // emitted by `all-component-colors` running after `all-component-themes`.
-
-// ---------------------------------------------------------------------------
-// TeamFlow Material 3 theme
-// Primary brand color: Material 3 baseline "Azure" blue palette.
-//
-// Angular Material 18's M3 theme emits the full set of --sys-* design
-// tokens (primary, on-primary, secondary-container, surface, outline, etc.)
-// for both light and dark color schemes, so component styles can consume
-// them directly without us having to redefine anything by hand.
-// ---------------------------------------------------------------------------
 
 $_primary: mat.$azure-palette;
 $_tertiary: mat.$blue-palette;
@@ -26,15 +16,15 @@ $light-theme: mat.define-theme(
     color: (
       theme-type: light,
       primary: $_primary,
-      tertiary: $_tertiary,
+      tertiary: $_tertiary
     ),
     typography: (
       plain-family: 'Roboto, "Helvetica Neue", sans-serif',
-      brand-family: 'Roboto, "Helvetica Neue", sans-serif',
+      brand-family: 'Roboto, "Helvetica Neue", sans-serif'
     ),
     density: (
-      scale: 0,
-    ),
+      scale: 0
+    )
   )
 );
 
@@ -43,26 +33,23 @@ $dark-theme: mat.define-theme(
     color: (
       theme-type: dark,
       primary: $_primary,
-      tertiary: $_tertiary,
+      tertiary: $_tertiary
     ),
     typography: (
       plain-family: 'Roboto, "Helvetica Neue", sans-serif',
-      brand-family: 'Roboto, "Helvetica Neue", sans-serif',
+      brand-family: 'Roboto, "Helvetica Neue", sans-serif'
     ),
     density: (
-      scale: 0,
-    ),
+      scale: 0
+    )
   )
 );
 
-// Apply the light theme as the default. This emits both component themes
-// and the --sys-* system token palette automatically.
 html {
   @include mat.all-component-themes($light-theme);
   @include mat.system-level-colors($light-theme);
   @include mat.system-level-typography($light-theme);
 
-  // Make sure Material's `color="primary"` controls match the Azure primary.
   --mdc-filled-button-container-color: var(--sys-primary);
   --mdc-filled-button-label-text-color: var(--sys-on-primary);
   --mdc-protected-button-container-color: var(--sys-primary);
@@ -73,16 +60,14 @@ html {
   --mat-fab-foreground-color: var(--sys-on-primary);
 }
 
-// Dark mode via explicit user override on <html data-theme="dark">.
-html[data-theme='dark'] {
+html[data-theme="dark"] {
   @include mat.all-component-colors($dark-theme);
   @include mat.system-level-colors($dark-theme);
   color-scheme: dark;
 }
 
-// Honor OS preference unless the user has explicitly chosen light.
 @media (prefers-color-scheme: dark) {
-  html:not([data-theme='light']) {
+  html:not([data-theme="light"]) {
     @include mat.all-component-colors($dark-theme);
     @include mat.system-level-colors($dark-theme);
     color-scheme: dark;
